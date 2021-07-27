@@ -9,6 +9,12 @@
             <router-link
               :to="{
                 name: 'ItemDetail',
+                params: {
+                  id: item.id,
+                  name: item.name,
+                  price: item.price,
+                  imagePath: item.img,
+                },
               }"
               ><v-card>
                 <v-img :src="item.img"></v-img>
