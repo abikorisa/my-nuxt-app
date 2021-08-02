@@ -2,7 +2,7 @@
   <v-app>
     <v-container>
       <Carousel />
-      <TextForm />
+      <SearchForm />
       <v-hover>
         <v-row>
           <v-col cols="3" v-for="(item, i) in items" :key="i" align="center">
@@ -34,7 +34,7 @@
 </template>
 
 <script>
-import TextForm from '@/components/molecules/TextForm.vue'
+import SearchForm from '@/components/molecules/SearchForm.vue'
 import Carousel from '@/components/molecules/Carousel.vue'
 
 export default {
@@ -51,7 +51,7 @@ export default {
           id: 2,
           name: 'カジュアルロゴキャップ',
           price: 1800,
-          img: require('../../ec-img/2/1.jpeg'),
+          img: require('../../ec-img/2/3.jpeg'),
         },
         {
           id: 3,
@@ -60,28 +60,16 @@ export default {
           img: require('../../ec-img/3/1.jpeg'),
         },
         {
-          id: 1,
-          name: 'オーバオールワンピース',
-          price: 4300,
-          img: require('../../ec-img/1/01.jpeg'),
-        },
-        {
-          id: 2,
-          name: 'カジュアルロゴキャップ',
-          price: 1800,
-          img: require('../../ec-img/2/1.jpeg'),
-        },
-        {
-          id: 3,
-          name: 'ショートスリーブニット',
-          price: 1900,
-          img: require('../../ec-img/3/1.jpeg'),
+          id: 4,
+          name: 'ロングデニムパンツ',
+          price: 2400,
+          img: require('../../ec-img/4/1.jpeg'),
         },
       ],
     }
   },
   components: {
-    TextForm,
+    SearchForm,
     Carousel,
   },
 }
