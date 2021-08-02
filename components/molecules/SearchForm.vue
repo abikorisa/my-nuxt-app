@@ -6,15 +6,14 @@
           <v-text-field
             v-model="search_word"
             label="お探しの商品はなんですか？"
-            outlined
             dense
           >
-            <template v-slot:append-outer>
+            <template v-slot:append>
+              <v-btn icon @click="clearWord()"
+                ><v-icon>mdi-close-circle</v-icon></v-btn
+              >
               <v-btn icon @click="checkWord()"
                 ><v-icon>mdi-magnify</v-icon></v-btn
-              >
-              <v-btn icon @click="clearWord()"
-                ><v-icon>mdi-autorenew</v-icon></v-btn
               >
             </template></v-text-field
           >
@@ -94,11 +93,12 @@ export default {
   },
   methods: {
     checkWord() {
-      console.log(this.search_word)
       this.items.forEach((search) => {
         let findName = search.name
         if (0 <= findName.search(this.search_word)) {
           this.searchItem.push(search)
+        } else {
+          this.$store.state.flag = false
         }
       })
       if (this.searchItem.length === 0) {
@@ -111,6 +111,7 @@ export default {
       this.search_word = ''
       this.searchItem = []
       this.show = false
+      this.$store.state.flag = true
     },
   },
 }

@@ -38,6 +38,17 @@
       </v-container>
     </v-main>
     <v-footer :absolute="!fixed" app>
+      <div class="footer_item">
+        <router-link :to="{ name: 'Cart' }"
+          ><v-btn icon><v-icon>mdi-cart</v-icon></v-btn></router-link
+        >
+        <router-link :to="{ name: 'OrderHistory' }"
+          ><v-btn icon><v-icon>mdi-book-open</v-icon></v-btn></router-link
+        >
+        <router-link :to="{ name: 'Login' }"
+          ><v-btn icon><v-icon>mdi-account-check</v-icon></v-btn></router-link
+        ><br />
+      </div>
       <span>&copy; {{ new Date().getFullYear() }}</span>
     </v-footer>
   </v-app>
@@ -74,5 +85,10 @@ export default {
 .header-title {
   font-family: 'Amatic SC', cursive;
   font-size: 40px;
+}
+
+.footer_item {
+  margin-left: auto;
+  margin-right: auto;
 }
 </style>
