@@ -1,61 +1,48 @@
 <template>
-  <v-row>
-    <v-card>
-      <v-card-title>
-        <span class="text-h5">ログイン</span>
-      </v-card-title>
-      <v-card-text>
-        <v-container>
-          <v-row>
-            <v-col cols="12" sm="6" md="4">
-              <v-text-field label="Email*" required></v-text-field>
-            </v-col>
-            <v-col cols="12">
+  <v-app>
+    <v-container>
+      <v-layout justify-center>
+        <v-card class="box-shadow-none" width="60%">
+          <div class="top-card">
+            <v-card-title class="justify-center top-title">
+              ログイン</v-card-title
+            >
+          </div>
+          <v-card-text>
+            <form>
               <v-text-field
-                label="Password*"
-                type="password"
+                id="email"
+                prepend-icon="mdi-email"
+                label="メールアドレス"
                 required
               ></v-text-field>
-            </v-col>
-            <v-col cols="12" sm="6">
-              <v-select
-                :items="['0-17', '18-29', '30-54', '54+']"
-                label="Age*"
+
+              <v-text-field
+                id="password"
+                prepend-icon="mdi-lock"
+                label="パスワード"
                 required
-              ></v-select>
-            </v-col>
-            <v-col cols="12" sm="6">
-              <v-autocomplete
-                :items="[
-                  'Skiing',
-                  'Ice hockey',
-                  'Soccer',
-                  'Basketball',
-                  'Hockey',
-                  'Reading',
-                  'Writing',
-                  'Coding',
-                  'Basejump',
-                ]"
-                label="Interests"
-                multiple
-              ></v-autocomplete>
-            </v-col>
-          </v-row>
-        </v-container>
-      </v-card-text>
-      <v-card-actions>
-        <v-spacer></v-spacer>
-      </v-card-actions>
-    </v-card>
-    <router-link :to="{ name: 'Resister' }">会員登録はこちらから</router-link>
-  </v-row>
+                type="password"
+              ></v-text-field>
+
+              <div class="text-center">
+                <v-btn>ログイン</v-btn>
+              </div>
+            </form>
+          </v-card-text>
+          <v-card-text>
+            <div class="text-center">
+              <router-link :to="{ name: 'Resister' }"
+                >※新規会員登録はこちら！</router-link
+              >
+            </div>
+          </v-card-text>
+        </v-card>
+      </v-layout>
+    </v-container>
+  </v-app>
 </template>
 
 <script>
-export default {
-  data: () => ({
-    dialog: false,
-  }),
-}
+export default {}
 </script>
