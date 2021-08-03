@@ -93,6 +93,7 @@ export default {
   },
   methods: {
     checkWord() {
+      this.searchItem = []
       this.items.forEach((search) => {
         let findName = search.name
         if (0 <= findName.search(this.search_word)) {
