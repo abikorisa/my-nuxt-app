@@ -47,7 +47,7 @@
         >
         <router-link :to="{ name: 'Login' }"
           ><v-btn icon><v-icon>mdi-account-check</v-icon></v-btn></router-link
-        ><br />
+        >
       </div>
       <span>&copy; {{ new Date().getFullYear() }}</span>
     </v-footer>

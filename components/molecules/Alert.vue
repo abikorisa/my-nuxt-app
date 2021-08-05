@@ -1,0 +1,11 @@
+<template>
+  <v-alert
+    color="green"
+    dismissible
+    icon="mdi-account"
+    outlined
+    text
+    type="info"
+    >ログインに成功しました</v-alert
+  >
+</template>

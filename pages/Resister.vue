@@ -12,21 +12,21 @@
             <form>
               <v-text-field
                 id="email"
+                v-model="email"
                 prepend-icon="mdi-email"
                 label="メールアドレス"
-                required
               ></v-text-field>
 
               <v-text-field
                 id="password"
+                v-model="password"
                 prepend-icon="mdi-lock"
                 label="パスワード"
-                required
                 type="password"
               ></v-text-field>
 
               <div class="text-center">
-                <v-btn>ログイン</v-btn>
+                <v-btn @click="signIn()">ログイン</v-btn>
               </div>
             </form>
           </v-card-text>
@@ -37,5 +37,20 @@
 </template>
 
 <script>
-export default {}
+import { mapActions } from 'vuex'
+
+export default {
+  data() {
+    return {
+      email: '',
+      password: '',
+    }
+  },
+  methods: {
+    ...mapActions(['resisterUser']),
+    signIn() {
+      this.resisterUser({ email: this.email, password: this.password })
+    },
+  },
+}
 </script>

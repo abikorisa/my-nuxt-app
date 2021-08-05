@@ -1,6 +1,7 @@
 <template>
   <v-app>
     <h3>ショッピングカート</h3>
+    <v-btn @click="checkUser()">ログイン状態の確認</v-btn>
     <v-row>
       <v-col cols="10">
         <v-data-table :headers="headers" :items="items">
@@ -55,6 +56,11 @@ export default {
         },
       ],
     }
+  },
+  methods: {
+    checkUser() {
+      console.log(this.$store.state.login_user.uid)
+    },
   },
 }
 </script>
