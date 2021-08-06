@@ -1,11 +1,17 @@
-import Vuex from 'vuex'
 import firebase from '~/plugins/firebase'
+import Vuex from 'vuex'
 
-export const createStore = () => {
+const createStore = () => {
   return new Vuex.Store({
-    state: {
-      flag: true,
-      login_user: null,
+    state() {
+      return {
+        flag: true,
+        login_user: null,
+        cartItems: [],
+      }
+    },
+    getters: {
+      uid: (state) => (state.login_user ? state.login_user.uid : null),
     },
     mutations: {
       setLoginUser(state, user) {
@@ -14,12 +20,14 @@ export const createStore = () => {
       deleteLoginUser(state) {
         state.login_user = null
       },
+      addItemToCart(state, item) {
+        state.cartItems.push(item)
+      },
     },
     actions: {
       logout() {
         firebase.auth().signOut()
       },
-      /* 新規ユーザ登録 */
       resisterUser({ commit }, { email, password }) {
         firebase
           .auth()
@@ -33,11 +41,12 @@ export const createStore = () => {
             let errorMessage = error.message
           })
       },
-      loginUser({ state, commit }, { email, password }) {
+      loginUser({ commit }, { email, password }) {
         firebase
           .auth()
           .signInWithEmailAndPassword(email, password)
-          .then((user) => {
+          .then(() => {
+            let user = firebase.auth().currentUser
             commit('setLoginUser', user)
             console.log('ログインに成功しました！')
           })
@@ -51,10 +60,11 @@ export const createStore = () => {
       deleteLoginUser({ commit }) {
         commit('deleteLoginUser')
       },
-    },
-    getters: {
-      uid: (state) => (state.login_user ? state.login_user.uid : null),
+      addItemToCart({ commit }, item) {
+        commit('addItemToCart', item)
+      },
     },
   })
 }
+
 export default createStore

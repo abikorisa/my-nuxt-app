@@ -41,7 +41,7 @@
 import SearchForm from '@/components/molecules/SearchForm.vue'
 import Carousel from '@/components/molecules/Carousel.vue'
 import firebase from '~/plugins/firebase'
-import { mapActions } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 
 export default {
   created() {
@@ -125,6 +125,9 @@ export default {
         },
       ],
     }
+  },
+  computed: {
+    ...mapState(['login_user']),
   },
   components: {
     SearchForm,

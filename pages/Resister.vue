@@ -49,7 +49,11 @@ export default {
   methods: {
     ...mapActions(['resisterUser']),
     signIn() {
-      this.resisterUser({ email: this.email, password: this.password })
+      this.resisterUser({
+        email: this.email,
+        password: this.password,
+      })
+      alert('ログインに成功しました。')
     },
   },
 }

@@ -37,7 +37,7 @@
               </tr>
               <tr>
                 <td colspan="4">サイズ：M</td>
-                <td><v-btn>カートに追加</v-btn></td>
+                <td><v-btn @click="addCart()">カートに追加</v-btn></td>
                 <td>
                   <v-btn icon><v-icon>mdi-heart</v-icon></v-btn>
                 </td>
@@ -55,6 +55,8 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex'
+
 export default {
   data() {
     return {
@@ -71,6 +73,11 @@ export default {
     changeImage3() {
       this.imagePath = this.$route.params.image3
     },
+    ...mapActions(['addItemToCart']),
+    addCart() {
+      this.addItemToCart({ item: this.itemPath })
+      console.log('動いた！')
+    },
   },
 }
 </script>
@@ -85,14 +92,13 @@ export default {
 .left_clum {
   width: 50%;
   padding-left: 40px;
+  .img__list {
+    display: flex;
+    padding: 10px 0px;
+  }
 }
 .right_clum {
   width: 50%;
   padding-left: 40px;
-}
-
-.img__list {
-  display: flex;
-  padding: 10px 0px;
 }
 </style>
