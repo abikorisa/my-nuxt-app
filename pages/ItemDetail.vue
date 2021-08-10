@@ -3,13 +3,13 @@
     <v-container class="flex__main">
       <div class="left_clum">
         <v-img width="500" :src="imagePath"></v-img>
-        <div class="img__list">
+        <!--  <div class="img__list">
           <v-img
             width="120"
             @click="changeImage1()"
             :src="$route.params.image1"
           ></v-img>
-          <v-img
+           <v-img
             width="120"
             @click="changeImage2()"
             :src="$route.params.image2"
@@ -19,7 +19,7 @@
             @click="changeImage3()"
             :src="$route.params.image3"
           ></v-img>
-        </div>
+        </div> -->
       </div>
       <div class="right_clum">
         <v-card>
@@ -46,8 +46,8 @@
           </div>
           <v-card-text
             >【アイテム詳細】<br />
-            涼しげな素材を使用したプルオーバー。サイドのリボンを絞ることで、ロング丈のスカートやワイドパンツともグッと相性が良くなります。</v-card-text
-          >
+            {{ $route.params.text }}
+          </v-card-text>
         </v-card>
       </div>
     </v-container>
@@ -64,7 +64,7 @@ export default {
     }
   },
   methods: {
-    changeImage1() {
+    /* changeImage1() {
       this.imagePath = this.$route.params.image1
     },
     changeImage2() {
@@ -72,7 +72,7 @@ export default {
     },
     changeImage3() {
       this.imagePath = this.$route.params.image3
-    },
+    }, */
     ...mapActions(['addItemToCart']),
     addCart() {
       this.addItemToCart({ item: this.itemPath })

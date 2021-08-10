@@ -74,7 +74,7 @@ export default {
         { value: 'delete', sortable: false },
       ],
       items: [
-        {
+        /*         {
           id: 1,
           name: 'オーバオールワンピース',
           price: 4300,
@@ -87,7 +87,7 @@ export default {
           price: 4300,
           img: require('../../ec-img/1/01.jpeg'),
           num: 1,
-        },
+        }, */
       ],
     }
   },

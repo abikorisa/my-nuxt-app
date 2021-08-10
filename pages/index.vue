@@ -13,19 +13,20 @@
                 name: 'ItemDetail',
                 params: {
                   id: item.id,
-                  name: item.name,
-                  price: item.price,
+                  name: item.itemName,
+                  price: item.itemPrice,
                   image1: item.img1,
                   image2: item.img2,
                   image3: item.img3,
+                  text: item.itemText,
                 },
               }"
               ><v-card>
                 <v-img :src="item.img1"></v-img>
                 <v-card-text>
-                  {{ item.name }}
+                  {{ item.itemName }}
                 </v-card-text>
-                <v-card-text> JPY {{ item.price }} </v-card-text>
+                <v-card-text> JPY {{ item.itemPrice }} </v-card-text>
                 <v-card-actions>
                   <v-spacer />
                 </v-card-actions> </v-card
@@ -44,6 +45,10 @@ import firebase from '~/plugins/firebase'
 import { mapState, mapActions } from 'vuex'
 
 export default {
+  mounted() {
+    this.items = this.$store.state.itemList
+    this.fetchItemList()
+  },
   created() {
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
@@ -59,6 +64,7 @@ export default {
   data() {
     return {
       items: [
+        /*
         {
           id: 1,
           name: 'オーバオールワンピース',
@@ -74,67 +80,30 @@ export default {
           img1: require('../../ec-img/2/1.jpeg'),
           img2: require('../../ec-img/2/2.jpeg'),
           img3: require('../../ec-img/2/3.jpeg'),
-        },
-        {
-          id: 3,
-          name: 'ショートスリーブニット',
-          price: 1900,
-          img1: require('../../ec-img/3/1.jpeg'),
-          img2: require('../../ec-img/3/2.jpeg'),
-          img3: require('../../ec-img/3/3.jpeg'),
-        },
-        {
-          id: 4,
-          name: 'ロングデニムパンツ',
-          price: 2400,
-          img1: require('../../ec-img/4/1.jpeg'),
-          img2: require('../../ec-img/4/2.jpeg'),
-          img3: require('../../ec-img/4/3.jpeg'),
-        },
-        {
-          id: 5,
-          name: 'ロングデニムパンツ',
-          price: 2400,
-          img1: require('../../ec-img/5/1.jpeg'),
-          img2: require('../../ec-img/5/2.jpeg'),
-          img3: require('../../ec-img/5/3.jpeg'),
-        },
-        {
-          id: 6,
-          name: 'ロングデニムパンツ',
-          price: 2400,
-          img1: require('../../ec-img/6/1.jpeg'),
-          img2: require('../../ec-img/6/2.jpeg'),
-          img3: require('../../ec-img/6/3.jpeg'),
-        },
-        {
-          id: 7,
-          name: 'ロングデニムパンツ',
-          price: 2400,
-          img1: require('../../ec-img/7/1.jpeg'),
-          img2: require('../../ec-img/7/2.jpeg'),
-          img3: require('../../ec-img/7/3.jpeg'),
-        },
-        {
-          id: 8,
-          name: 'ロングデニムパンツ',
-          price: 2400,
-          img1: require('../../ec-img/8/1.jpeg'),
-          img2: require('../../ec-img/8/2.jpeg'),
-          img3: require('../../ec-img/8/3.jpeg'),
-        },
+        }*/
       ],
     }
   },
   computed: {
     ...mapState(['login_user']),
+    /* ...mapActions(['fetchItemList']),
+    fetchItem() {
+      this.fetchItemList()
+      this.items = this.$store.state.itemList
+    }, */
   },
   components: {
     SearchForm,
     Carousel,
   },
   methods: {
-    ...mapActions(['setLoginUser', 'logout', 'deleteLoginUser']),
+    ...mapActions([
+      'setLoginUser',
+      'logout',
+      'deleteLoginUser',
+      'fetchItemList',
+      'updateItemList',
+    ]),
     checkUser() {
       console.log(this.$store.state.login_user)
     },
@@ -142,6 +111,9 @@ export default {
       this.logout()
       alert('ログアウトしました')
     },
+  },
+  destroyed() {
+    this.updateItemList()
   },
 }
 </script>

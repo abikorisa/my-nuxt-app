@@ -31,6 +31,9 @@
       <router-link :to="{ name: 'Login' }"
         ><v-btn icon><v-icon>mdi-account-check</v-icon></v-btn></router-link
       >
+      <router-link :to="{ name: 'Admin' }"
+        ><v-btn icon><v-icon>mdi-key-star</v-icon></v-btn></router-link
+      >
     </v-app-bar>
     <v-main>
       <v-container>

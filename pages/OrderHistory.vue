@@ -47,19 +47,20 @@ export default {
         },
       ],
       items: [
-        {
+        /*  {
           id: 1,
           name: 'オーバオールワンピース',
           price: 4300,
           img: require('../../ec-img/1/01.jpeg'),
           num: 1,
-        },
+        }, */
       ],
     }
   },
   methods: {
     checkUser() {
       console.log(this.$store.state.login_user.uid)
+      //こっちでもuid取得できている！
     },
   },
 }

@@ -34,17 +34,18 @@
                   name: 'ItemDetail',
                   params: {
                     id: search.id,
-                    name: search.name,
-                    price: search.price,
-                    imagePath: search.img,
+                    name: search.itemName,
+                    price: search.itemPrice,
+                    image1: search.img1,
+                    text: search.itemText,
                   },
                 }"
                 ><v-card>
-                  <v-img :src="search.img"></v-img>
+                  <v-img :src="search.img1"></v-img>
                   <v-card-text>
-                    {{ search.name }}
+                    {{ search.itemName }}
                   </v-card-text>
-                  <v-card-text> JPY {{ search.price }} </v-card-text>
+                  <v-card-text> JPY {{ search.itemPrice }} </v-card-text>
                   <v-card-actions>
                     <v-spacer />
                   </v-card-actions> </v-card
@@ -58,32 +59,18 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex'
+
 export default {
+  created() {
+    this.items = this.$store.state.itemList
+  },
   data() {
     return {
       search_word: '',
       searchItem: [],
       show: false,
-      items: [
-        {
-          id: 1,
-          name: 'オーバオールワンピース',
-          price: 4300,
-          img: require('../../../ec-img/1/01.jpeg'),
-        },
-        {
-          id: 2,
-          name: 'カジュアルロゴキャップ',
-          price: 1800,
-          img: require('../../../ec-img/2/1.jpeg'),
-        },
-        {
-          id: 3,
-          name: 'ショートスリーブニット',
-          price: 1900,
-          img: require('../../../ec-img/3/1.jpeg'),
-        },
-      ],
+      items: [],
     }
   },
   computed: {
@@ -92,10 +79,11 @@ export default {
     },
   },
   methods: {
+    ...mapActions(['fetchItemList']),
     checkWord() {
       this.searchItem = []
       this.items.forEach((search) => {
-        let findName = search.name
+        let findName = search.itemName
         if (0 <= findName.search(this.search_word)) {
           this.searchItem.push(search)
         } else {

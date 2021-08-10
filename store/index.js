@@ -8,6 +8,7 @@ const createStore = () => {
         flag: true,
         login_user: null,
         cartItems: [],
+        itemList: [],
       }
     },
     getters: {
@@ -22,6 +23,13 @@ const createStore = () => {
       },
       addItemToCart(state, item) {
         state.cartItems.push(item)
+      },
+      fetchItemList(state, { id, item }) {
+        item.id = id
+        state.itemList.push(item)
+      },
+      updateItemList(state) {
+        state.itemList = []
       },
     },
     actions: {
@@ -62,6 +70,39 @@ const createStore = () => {
       },
       addItemToCart({ commit }, item) {
         commit('addItemToCart', item)
+      },
+      doAddItem({ commit }, item) {
+        let storageRef = firebase
+          .storage()
+          .ref()
+          .child(`images/${item.img1.name}`)
+        storageRef.put(item.img1).then(() => {
+          storageRef.getDownloadURL().then((url) => {
+            item.img1 = url
+            firebase
+              .firestore()
+              .collection(`admin/3y7ewoyuQyNLROHoc1TcOZK0IqM2/itemList`) //adminに変更する
+              .add(item)
+              .then(() => {
+                console.log('画像1登録完了')
+                /* commit('doAddItem', { id: doc.id, item }) */
+              })
+          })
+        })
+      },
+      fetchItemList({ commit }) {
+        firebase
+          .firestore()
+          .collection(`admin/3y7ewoyuQyNLROHoc1TcOZK0IqM2/itemList`)
+          .get()
+          .then((snapShot) => {
+            snapShot.forEach((doc) => {
+              commit('fetchItemList', { id: doc.id, item: doc.data() })
+            })
+          })
+      },
+      updateItemList({ commit }) {
+        commit('updateItemList')
       },
     },
   })

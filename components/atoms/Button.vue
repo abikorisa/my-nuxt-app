@@ -5,7 +5,7 @@
 <script>
 export default {
   data() {
-    return { message: '' }
+    return { message: 'トップ画面に' }
   },
 }
 </script>
