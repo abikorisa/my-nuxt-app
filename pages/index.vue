@@ -12,13 +12,11 @@
               :to="{
                 name: 'ItemDetail',
                 params: {
-                  id: item.id,
-                  name: item.itemName,
-                  price: item.itemPrice,
-                  image1: item.img1,
-                  image2: item.img2,
-                  image3: item.img3,
-                  text: item.itemText,
+                  item_id: item.id,
+                  itemName: item.itemName,
+                  itemPrice: item.itemPrice,
+                  itemText: item.itemText,
+                  img1: item.img1,
                 },
               }"
               ><v-card>
@@ -63,34 +61,11 @@ export default {
   },
   data() {
     return {
-      items: [
-        /*
-        {
-          id: 1,
-          name: 'オーバオールワンピース',
-          price: 4300,
-          img1: require('../../ec-img/1/01.jpeg'),
-          img2: require('../../ec-img/1/02.jpeg'),
-          img3: require('../../ec-img/1/03.jpeg'),
-        },
-        {
-          id: 2,
-          name: 'カジュアルロゴキャップ',
-          price: 1800,
-          img1: require('../../ec-img/2/1.jpeg'),
-          img2: require('../../ec-img/2/2.jpeg'),
-          img3: require('../../ec-img/2/3.jpeg'),
-        }*/
-      ],
+      items: [],
     }
   },
   computed: {
     ...mapState(['login_user']),
-    /* ...mapActions(['fetchItemList']),
-    fetchItem() {
-      this.fetchItemList()
-      this.items = this.$store.state.itemList
-    }, */
   },
   components: {
     SearchForm,

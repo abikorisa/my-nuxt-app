@@ -21,11 +21,13 @@ const createStore = () => {
       deleteLoginUser(state) {
         state.login_user = null
       },
+      //カート追加処理
       addItemToCart(state, item) {
         state.cartItems.push(item)
       },
+      //取得した商品情報をローカルでも保持
       fetchItemList(state, { id, item }) {
-        item.id = id
+        item.itemId = id
         state.itemList.push(item)
       },
       updateItemList(state) {
@@ -68,9 +70,11 @@ const createStore = () => {
       deleteLoginUser({ commit }) {
         commit('deleteLoginUser')
       },
+      //カート追加処理
       addItemToCart({ commit }, item) {
         commit('addItemToCart', item)
       },
+      //管理者画面・商品追加処理
       doAddItem({ commit }, item) {
         let storageRef = firebase
           .storage()
@@ -81,15 +85,15 @@ const createStore = () => {
             item.img1 = url
             firebase
               .firestore()
-              .collection(`admin/3y7ewoyuQyNLROHoc1TcOZK0IqM2/itemList`) //adminに変更する
+              .collection(`admin/3y7ewoyuQyNLROHoc1TcOZK0IqM2/itemList`)
               .add(item)
               .then(() => {
                 console.log('画像1登録完了')
-                /* commit('doAddItem', { id: doc.id, item }) */
               })
           })
         })
       },
+      //firestore内の商品情報を取得
       fetchItemList({ commit }) {
         firebase
           .firestore()

@@ -1,66 +1,88 @@
 <template>
   <v-app>
-    <h3>ショッピングカート</h3>
-    <v-btn @click="checkUser()">ログイン状態の確認</v-btn>
-    <v-row>
-      <v-col cols="10">
-        <v-data-table :headers="headers" :items="items">
-          <template v-slot:[`item.img`]="{ item }">
-            <img :src="item.img" width="100px" />
+    <v-container>
+      <h2>注文履歴</h2>
+      <v-layout justify-center>
+        <v-data-table
+          hide-default-footer
+          class="elevation-1"
+          :headers="headers"
+          :items="cartItems"
+        >
+          <template v-slot:[`cartItems.img1`]="{ cartItems }">
+            <img :src="cartItems.img1" width="100px" />
+          </template>
+          <template v-slot:[`cartItems.itemPrice`]="{ cartItems }">
+            <td>{{ cartItems.itemPrice.toLocaleString('ja-JP') }}円</td>
           </template>
         </v-data-table>
-      </v-col>
-    </v-row>
-    <Button message="トップ画面に戻る" />
+      </v-layout>
+      <v-layout justify-center>
+        <v-btn @click="CartItems()">動いてる？</v-btn>
+      </v-layout>
+      <v-layout justify-center>
+        <OrderForm v-show="!show" />
+      </v-layout>
+    </v-container>
   </v-app>
 </template>
 
 <script>
 import Button from '@/components/atoms/Button.vue'
+import OrderForm from '@/components/molecules/OrderForm.vue'
 
 export default {
   components: {
     Button,
+    OrderForm,
   },
   data() {
     return {
+      show: true,
       headers: [
         {
           text: '',
-          img: 'img',
-          value: 'img',
+          value: 'img1',
         },
         {
-          name: '商品名',
           text: '商品名',
-          value: 'name',
+          value: 'itemName',
         },
         {
-          price: '価格',
           text: '価格',
-          value: 'price',
+          value: 'itemPrice',
         },
         {
-          num: '個数',
           text: '個数',
           value: 'num',
         },
+        { value: 'delete', sortable: false },
       ],
-      items: [
-        /*  {
+      cartItems: [
+        {
           id: 1,
-          name: 'オーバオールワンピース',
-          price: 4300,
-          img: require('../../ec-img/1/01.jpeg'),
-          num: 1,
-        }, */
+          itemName: 'オーバオールワンピース',
+          itemPrice: 4300,
+          img1: require('../../ec-img/9/25.jpeg'),
+          itemText:
+            'シンプルでコーディネイトしやすいロングワンピースを紹介します！ シンプルなデザインにさらっとした素材感がポイントのワンピースです。すっきりAラインのマキシ丈で、自然に体型カバーもしてくれます。普段使いしやすいデザインとカラーで、デイリーに楽しむことのできるおすすめのワンピースです！',
+        },
       ],
     }
   },
   methods: {
-    checkUser() {
-      console.log(this.$store.state.login_user.uid)
-      //こっちでもuid取得できている！
+    CartItems() {
+      console.log(this.cartItems)
+    },
+    deleteConfirm() {
+      confirm('削除してもよろしいですか？')
+    },
+    loginCheck() {
+      if (this.$store.getters.uid) {
+        this.show = !this.show
+      } else {
+        this.$router.push('/Login')
+      }
     },
   },
 }

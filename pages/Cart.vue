@@ -8,18 +8,18 @@
           hide-default-footer
           class="elevation-1"
           :headers="headers"
-          :items="items"
+          :items="cartItems"
         >
-          <template v-slot:[`item.img`]="{ item }">
-            <img :src="item.img" width="100px" />
+          <template v-slot:[`cartItems.img1`]="{ cartItems }">
+            <img :src="cartItems.img1" width="100px" />
           </template>
-          <template v-slot:[`item.price`]="{ item }">
-            <td>{{ item.price.toLocaleString('ja-JP') }}円</td>
+          <template v-slot:[`cartItems.itemPrice`]="{ cartItems }">
+            <td>{{ cartItems.itemPrice.toLocaleString('ja-JP') }}円</td>
           </template>
-          <template v-slot:[`item.delete`]="{ item }">
+          <template v-slot:[`cartItems.delete`]="{ cartItems }">
             <v-btn
               v-if="show"
-              @click="deleteConfirm(item.cartId)"
+              @click="deleteConfirm(cartItems.id)"
               color="error"
               rounded
               ><strong>削除</strong></v-btn
@@ -47,56 +47,37 @@ export default {
     Button,
     OrderForm,
   },
+  created() {
+    this.cartItems = this.$store.state.cartItems
+  },
   data() {
     return {
       show: true,
       headers: [
         {
           text: '',
-          img: 'img',
-          value: 'img',
+          value: 'img1',
         },
         {
-          name: '商品名',
           text: '商品名',
-          value: 'name',
+          value: 'itemName',
         },
         {
-          price: '価格',
           text: '価格',
-          value: 'price',
+          value: 'itemPrice',
         },
         {
-          num: '個数',
           text: '個数',
           value: 'num',
         },
         { value: 'delete', sortable: false },
       ],
-      items: [
-        /*         {
-          id: 1,
-          name: 'オーバオールワンピース',
-          price: 4300,
-          img: require('../../ec-img/1/01.jpeg'),
-          num: 1,
-        },
-        {
-          id: 2,
-          name: 'オーバオールワンピース',
-          price: 4300,
-          img: require('../../ec-img/1/01.jpeg'),
-          num: 1,
-        }, */
-      ],
+      cartItems: [],
     }
   },
   methods: {
     CartItems() {
-      if (this.$store.state.cartItems) {
-        let cartItems = this.$store.state.cartItems
-        console.log(cartItems.doc)
-      }
+      console.log(this.cartItems)
     },
     deleteConfirm() {
       confirm('削除してもよろしいですか？')
