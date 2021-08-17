@@ -22,18 +22,14 @@
       <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
       <v-toolbar-title class="header-title" v-text="title" />
       <v-spacer />
-      <router-link :to="{ name: 'Cart' }"
-        ><v-btn icon><v-icon>mdi-cart</v-icon></v-btn></router-link
+      <v-btn @click="checkOrderId()">getter.orderIdできてますか・・・</v-btn>
+      <v-btn to="Cart" icon><v-icon>mdi-cart</v-icon></v-btn>
+      <v-btn to="OrderHistory" icon><v-icon>mdi-book-open</v-icon></v-btn>
+      <v-btn @click="checkOut" v-if="$store.state.login_user" icon
+        ><v-icon>mdi-logout</v-icon></v-btn
       >
-      <router-link :to="{ name: 'OrderHistory' }"
-        ><v-btn icon><v-icon>mdi-book-open</v-icon></v-btn></router-link
-      >
-      <router-link :to="{ name: 'Login' }"
-        ><v-btn icon><v-icon>mdi-account-check</v-icon></v-btn></router-link
-      >
-      <router-link :to="{ name: 'Admin' }"
-        ><v-btn icon><v-icon>mdi-key-star</v-icon></v-btn></router-link
-      >
+      <v-btn to="Login" icon v-else><v-icon>mdi-login</v-icon></v-btn>
+      <v-btn to="Admin" icon><v-icon>mdi-key-star</v-icon></v-btn>
     </v-app-bar>
     <v-main>
       <v-container>
@@ -42,15 +38,9 @@
     </v-main>
     <v-footer :absolute="!fixed" app>
       <div class="footer_item">
-        <router-link :to="{ name: 'Cart' }"
-          ><v-btn icon><v-icon>mdi-cart</v-icon></v-btn></router-link
-        >
-        <router-link :to="{ name: 'OrderHistory' }"
-          ><v-btn icon><v-icon>mdi-book-open</v-icon></v-btn></router-link
-        >
-        <router-link :to="{ name: 'Login' }"
-          ><v-btn icon><v-icon>mdi-account-check</v-icon></v-btn></router-link
-        >
+        <v-btn to="Cart" icon><v-icon>mdi-cart</v-icon></v-btn>
+        <v-btn to="OrderHistory" icon><v-icon>mdi-book-open</v-icon></v-btn>
+        <v-btn to="Login" icon><v-icon>mdi-account-check</v-icon></v-btn>
       </div>
       <span>&copy; {{ new Date().getFullYear() }}</span>
     </v-footer>
@@ -58,6 +48,8 @@
 </template>
 
 <script>
+import { mapActions, mapGetters } from 'vuex'
+
 export default {
   data() {
     return {
@@ -78,6 +70,17 @@ export default {
       ],
       title: '#4',
     }
+  },
+  methods: {
+    ...mapActions(['logout']),
+    ...mapGetters(['orderId']),
+    checkOrderId() {
+      return console.log(this.$store.getters.orderId)
+    },
+    checkOut() {
+      this.logout()
+      alert('ログアウトしました')
+    },
   },
 }
 </script>

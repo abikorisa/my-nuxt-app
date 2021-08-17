@@ -2,8 +2,6 @@
   <v-app>
     <Carousel />
     <SearchForm />
-    <v-btn @click="checkUser()">ログインされてる？</v-btn>
-    <v-btn @click="checkOut">ログアウトする！</v-btn>
     <v-container v-if="$store.state.flag">
       <v-hover>
         <v-row>
@@ -51,6 +49,7 @@ export default {
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
         this.setLoginUser(user)
+        this.fetchOrderList()
         this.$router.push('/')
       } else {
         this.deleteLoginUser()
@@ -78,14 +77,8 @@ export default {
       'deleteLoginUser',
       'fetchItemList',
       'updateItemList',
+      'fetchOrderList',
     ]),
-    checkUser() {
-      console.log(this.$store.state.login_user)
-    },
-    checkOut() {
-      this.logout()
-      alert('ログアウトしました')
-    },
   },
   destroyed() {
     this.updateItemList()

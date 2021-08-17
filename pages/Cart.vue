@@ -10,16 +10,16 @@
           :headers="headers"
           :items="cartItems"
         >
-          <template v-slot:[`cartItems.img1`]="{ cartItems }">
-            <img :src="cartItems.img1" width="100px" />
+          <template v-slot:[`item.img1`]="{ item }">
+            <img :src="item.img1" width="100px" />
           </template>
-          <template v-slot:[`cartItems.itemPrice`]="{ cartItems }">
-            <td>{{ cartItems.itemPrice.toLocaleString('ja-JP') }}円</td>
-          </template>
-          <template v-slot:[`cartItems.delete`]="{ cartItems }">
+          <!-- <template v-slot:[`item.itemPrice`]="{ item }">
+            <td>{{ item.itemPrice.toLocaleString('ja-JP') }}円</td>
+          </template> -->
+          <template v-slot:[`item.delete`]="{ item }">
             <v-btn
               v-if="show"
-              @click="deleteConfirm(cartItems.id)"
+              @click="deleteConfirm(item.index)"
               color="error"
               rounded
               ><strong>削除</strong></v-btn
@@ -28,7 +28,6 @@
         </v-data-table>
       </v-layout>
       <v-layout justify-center>
-        <v-btn @click="CartItems()">動いてる？</v-btn>
         <v-btn @click="loginCheck()">注文にすすむ</v-btn>
       </v-layout>
       <v-layout justify-center>
@@ -41,6 +40,7 @@
 <script>
 import Button from '@/components/atoms/Button.vue'
 import OrderForm from '@/components/molecules/OrderForm.vue'
+import { mapActions } from 'vuex'
 
 export default {
   components: {
@@ -48,7 +48,8 @@ export default {
     OrderForm,
   },
   created() {
-    this.cartItems = this.$store.state.cartItems
+    //これだとリロードするとエラーになってしまう・・・
+    this.cartItems = this.$store.state.cartItems.itemInfo
   },
   data() {
     return {
@@ -57,6 +58,7 @@ export default {
         {
           text: '',
           value: 'img1',
+          sortable: false,
         },
         {
           text: '商品名',
@@ -66,19 +68,26 @@ export default {
           text: '価格',
           value: 'itemPrice',
         },
-        {
-          text: '個数',
-          value: 'num',
-        },
         { value: 'delete', sortable: false },
       ],
       cartItems: [],
     }
   },
-  methods: {
-    CartItems() {
-      console.log(this.cartItems)
+  computed: {
+    cartLength() {
+      if (this.$store.state.cartItems) {
+        this.cartItems = this.$store.state.cartItems
+        if (cartItems.itemInfo.length === 0) {
+          return false
+        } else {
+          return true
+        }
+      } else {
+        return false
+      }
     },
+  },
+  methods: {
     deleteConfirm() {
       confirm('削除してもよろしいですか？')
     },
@@ -90,5 +99,8 @@ export default {
       }
     },
   },
+  /* destroyed() {
+    this.updateOrderList()
+  } */
 }
 </script>

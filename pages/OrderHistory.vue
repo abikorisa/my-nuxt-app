@@ -7,34 +7,27 @@
           hide-default-footer
           class="elevation-1"
           :headers="headers"
-          :items="cartItems"
+          :items="orderdItem"
         >
-          <template v-slot:[`cartItems.img1`]="{ cartItems }">
-            <img :src="cartItems.img1" width="100px" />
+          <template v-slot:[`item.img1`]="{ item }">
+            <img :src="item.img1" width="100px" />
           </template>
-          <template v-slot:[`cartItems.itemPrice`]="{ cartItems }">
-            <td>{{ cartItems.itemPrice.toLocaleString('ja-JP') }}円</td>
+          <template v-slot:[`item.itemPrice`]="{ item }">
+            <td>{{ item.itemPrice.toLocaleString('ja-JP') }}円</td>
           </template>
         </v-data-table>
-      </v-layout>
-      <v-layout justify-center>
-        <v-btn @click="CartItems()">動いてる？</v-btn>
-      </v-layout>
-      <v-layout justify-center>
-        <OrderForm v-show="!show" />
       </v-layout>
     </v-container>
   </v-app>
 </template>
 
 <script>
-import Button from '@/components/atoms/Button.vue'
-import OrderForm from '@/components/molecules/OrderForm.vue'
-
 export default {
-  components: {
-    Button,
-    OrderForm,
+  created() {
+    let orderedItems = this.$store.state.orderedItems
+    orderedItems.forEach((order) => {
+      this.orderdItem = order.itemInfo
+    })
   },
   data() {
     return {
@@ -58,25 +51,10 @@ export default {
         },
         { value: 'delete', sortable: false },
       ],
-      cartItems: [
-        {
-          id: 1,
-          itemName: 'オーバオールワンピース',
-          itemPrice: 4300,
-          img1: require('../../ec-img/9/25.jpeg'),
-          itemText:
-            'シンプルでコーディネイトしやすいロングワンピースを紹介します！ シンプルなデザインにさらっとした素材感がポイントのワンピースです。すっきりAラインのマキシ丈で、自然に体型カバーもしてくれます。普段使いしやすいデザインとカラーで、デイリーに楽しむことのできるおすすめのワンピースです！',
-        },
-      ],
+      orderdItem: [],
     }
   },
   methods: {
-    CartItems() {
-      console.log(this.cartItems)
-    },
-    deleteConfirm() {
-      confirm('削除してもよろしいですか？')
-    },
     loginCheck() {
       if (this.$store.getters.uid) {
         this.show = !this.show

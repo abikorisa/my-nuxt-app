@@ -55,8 +55,8 @@ export default {
   methods: {
     ...mapActions(['addItemToCart']),
     addCart() {
+      //itemはオブジェクトでした
       this.addItemToCart(this.item)
-      console.log(this.$store.state.cartItems)
     },
   },
 }

@@ -3,11 +3,7 @@
     <v-form>
       <div align="center">
         <v-col cols="12" sm="6" md="4">
-          <v-text-field
-            v-model="search_word"
-            label="お探しの商品はなんですか？"
-            dense
-          >
+          <v-text-field v-model="search_word" label="Search our store" dense>
             <template v-slot:append>
               <v-btn icon @click="clearWord()"
                 ><v-icon>mdi-close-circle</v-icon></v-btn
@@ -33,11 +29,11 @@
                 :to="{
                   name: 'ItemDetail',
                   params: {
-                    id: search.id,
-                    name: search.itemName,
-                    price: search.itemPrice,
-                    image1: search.img1,
-                    text: search.itemText,
+                    item_id: search.id,
+                    itemName: search.itemName,
+                    itemPrice: search.itemPrice,
+                    itemText: search.itemText,
+                    img1: search.img1,
                   },
                 }"
                 ><v-card>
