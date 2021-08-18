@@ -9,16 +9,18 @@
         <v-card-text>¥{{ item.itemPrice }}　(税込)</v-card-text>
 
         <div align="center">
+          <v-text-field
+            width="5"
+            v-model="item.itemNum"
+            type="number"
+            style="width: 100px"
+            max="10"
+            min="1"
+          >
+          </v-text-field>
           <table>
             <tr>
-              <td colspan="4">サイズ：S</td>
-              <td><v-btn @click="addCart()">カートに追加</v-btn></td>
-              <td>
-                <v-btn icon><v-icon>mdi-heart</v-icon></v-btn>
-              </td>
-            </tr>
-            <tr>
-              <td colspan="4">サイズ：M</td>
+              <td colspan="4">ONE SIZE</td>
               <td><v-btn @click="addCart()">カートに追加</v-btn></td>
               <td>
                 <v-btn icon><v-icon>mdi-heart</v-icon></v-btn>
@@ -29,6 +31,11 @@
         <v-card-text
           >【アイテム詳細】<br />
           {{ item.itemText }}
+        </v-card-text>
+        <v-card-text>
+          ご注文金額合計：{{
+            (item.itemPrice * item.itemNum).toLocaleString('ja-JP')
+          }}円(税抜)
         </v-card-text>
       </v-card>
     </div>
@@ -48,15 +55,16 @@ export default {
   },
   data() {
     return {
-      item: {},
+      item: { itemNum: 1 },
       id: '',
     }
   },
   methods: {
     ...mapActions(['addItemToCart']),
     addCart() {
-      //itemはオブジェクトでした
+      //paramsで受け取ったitem(obj)の情報を引数に取る
       this.addItemToCart(this.item)
+      console.log(this.item)
     },
   },
 }

@@ -14,7 +14,6 @@ const createStore = () => {
     },
     getters: {
       uid: (state) => (state.login_user ? state.login_user.uid : null),
-      //addItemToCartでorderIdを設定しているのでordersIdが取得できているはず
       orderId: (state) => (state.cartItems ? state.cartItems.orderId : null),
     },
     mutations: {
@@ -32,13 +31,18 @@ const createStore = () => {
       },
       //カート追加処理
       addItemToCart(state, { orderId, order }) {
-        order.orderId = orderId
+        /* order.orderId = orderId */
         state.cartItems = order
+        state.cartItems.orderId = orderId
+        //下記はオブジェクトになっている
+        console.log(state.cartItems.itemInfo)
       },
       addItemToOrderedItems(state, { orderId, order }) {
         order.orderId = orderId
+        //ここにpushがあるからどんどんついかされてしまう
+        //下記処理を入れると1つめを追加したのちに消されてしまう
+        /* state.orderedItems = [] */
         state.orderedItems.push(order)
-        state.cartItems = null
       },
       fetchOrderList(state, { id, order }) {
         order.orderId = id //20桁のid
@@ -49,6 +53,9 @@ const createStore = () => {
       },
       updateOrderList(state) {
         state.cartItems = []
+      },
+      updateOrderedList(state) {
+        state.orderedItems = []
       },
     },
     actions: {
@@ -89,7 +96,7 @@ const createStore = () => {
       },
       //カート追加処理
       addItemToCart({ state, getters, commit }, item) {
-        //引数item(obj)をitemInfoのなかにいれて保持する
+        //引数で受け取ったitem(obj)をitemInfoのなかにいれる
         let order = {
           userId: getters.uid,
           itemInfo: [item],
@@ -125,7 +132,7 @@ const createStore = () => {
         }
       },
       //注文処理、引数orderInfo(obj)で入力データを取得してます
-      orderConfirm({ getters, commit }, { order }) {
+      orderConfirm({ state, getters, commit }, { order }) {
         if (getters.uid) {
           firebase
             .firestore()
@@ -133,6 +140,7 @@ const createStore = () => {
             .doc(getters.orderId)
             .update(order)
             .then(() => {
+              state.cartItems = null
               commit('addItemToOrderedItems', {
                 orderId: order.orderId,
                 order: order,
@@ -173,7 +181,7 @@ const createStore = () => {
           })
       },
       //firestore内のカート情報を取得
-      fetchOrderList({ getters, commit }) {
+      fetchOrderList({ state, getters, commit }) {
         if (getters.uid) {
           firebase
             .firestore()
@@ -182,11 +190,14 @@ const createStore = () => {
             .then((snapShot) => {
               snapShot.forEach((doc) => {
                 if (doc.data().status === 0) {
+                  console.log(doc.id)
                   commit('addItemToCart', {
                     orderId: doc.id,
                     order: doc.data(),
                   })
                 } else {
+                  //status:0も1もあるときに下記処理を加えるとNG
+                  //state.cartItems = null
                   commit('addItemToOrderedItems', {
                     orderId: doc.id,
                     order: doc.data(),
@@ -201,6 +212,9 @@ const createStore = () => {
       },
       updateOrderList({ commit }) {
         commit('updateOrderList')
+      },
+      updateOrderedList({ commit }) {
+        commit('updateOrderedList')
       },
       deleteItemFromCart({ commit }) {
         commit('deleteItemFromCart')

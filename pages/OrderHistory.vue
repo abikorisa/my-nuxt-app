@@ -15,6 +15,15 @@
           <template v-slot:[`item.itemPrice`]="{ item }">
             <td>{{ item.itemPrice.toLocaleString('ja-JP') }}円</td>
           </template>
+          <template v-slot:[`item.cancel`]="{ item }">
+            <v-btn
+              v-if="show"
+              @click="deleteConfirm(item.index)"
+              color="error"
+              rounded
+              ><strong>キャンセル</strong></v-btn
+            >
+          </template>
         </v-data-table>
       </v-layout>
     </v-container>
@@ -22,11 +31,15 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex'
+
 export default {
   created() {
     let orderedItems = this.$store.state.orderedItems
     orderedItems.forEach((order) => {
-      this.orderdItem = order.itemInfo
+      order.itemInfo.forEach((item) => {
+        this.orderdItem.push(item)
+      })
     })
   },
   data() {
@@ -49,12 +62,13 @@ export default {
           text: '個数',
           value: 'num',
         },
-        { value: 'delete', sortable: false },
+        { value: 'cancel', sortable: false },
       ],
       orderdItem: [],
     }
   },
   methods: {
+    ...mapActions(['updateOrderedList']),
     loginCheck() {
       if (this.$store.getters.uid) {
         this.show = !this.show
@@ -62,6 +76,12 @@ export default {
         this.$router.push('/Login')
       }
     },
+    deleteConfirm() {
+      confirm('削除してもよろしいですか？')
+    },
+  },
+  destroyed() {
+    this.updateOrderedList()
   },
 }
 </script>
