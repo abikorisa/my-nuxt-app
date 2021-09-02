@@ -17,6 +17,7 @@ const createStore = () => {
       orderId: (state) => (state.cartItems ? state.cartItems.orderId : null),
     },
     mutations: {
+      //ログイン関連処理
       setLoginUser(state, user) {
         state.login_user = user
       },
@@ -26,22 +27,20 @@ const createStore = () => {
       //取得した商品情報をローカルでも保持
       fetchItemList(state, { id, item }) {
         item.itemId = id
-        //itemListを配列で管理していないので以下の処理が必要
         state.itemList.push(item)
       },
       //カート追加処理
       addItemToCart(state, { orderId, order }) {
-        /* order.orderId = orderId */
         state.cartItems = order
         state.cartItems.orderId = orderId
-        //下記はオブジェクトになっている
         console.log(state.cartItems.itemInfo)
+      },
+      addItemToCartForNoUser(state, itemInfo) {
+        let cartItems = state.cartItems
+        cartItems.itemInfo.push(itemInfo)
       },
       addItemToOrderedItems(state, { orderId, order }) {
         order.orderId = orderId
-        //ここにpushがあるからどんどんついかされてしまう
-        //下記処理を入れると1つめを追加したのちに消されてしまう
-        /* state.orderedItems = [] */
         state.orderedItems.push(order)
       },
       fetchOrderList(state, { id, order }) {
@@ -57,6 +56,11 @@ const createStore = () => {
       updateOrderedList(state) {
         state.orderedItems = []
       },
+      //カートの中から商品を削除する処理
+      deleteCartItem(state, index) {
+        let cartItems = state.cartItems
+        cartItems.itemInfo.splice(index, 1)
+      },
     },
     actions: {
       logout() {
@@ -69,7 +73,6 @@ const createStore = () => {
           .then(() => {
             let user = firebase.auth().currentUser
             commit('setLoginUser', user)
-            console.log('新規会員登録ができました！')
           })
           .catch((error) => {
             let errorMessage = error.message
@@ -82,7 +85,6 @@ const createStore = () => {
           .then(() => {
             let user = firebase.auth().currentUser
             commit('setLoginUser', user)
-            console.log('ログインに成功しました！')
           })
           .catch((error) => {
             let errorMessage = error.message
@@ -96,13 +98,21 @@ const createStore = () => {
       },
       //カート追加処理
       addItemToCart({ state, getters, commit }, item) {
-        //引数で受け取ったitem(obj)をitemInfoのなかにいれる
+        function getUniqueStr(myStrong) {
+          var strong = 1000
+          if (myStrong) strong = myStrong
+          return (
+            new Date().getTime().toString(16) +
+            Math.floor(strong * Math.random()).toString(16)
+          )
+        }
+        let itemInfo = item
+        ;(itemInfo.id = getUniqueStr()), (itemInfo.itemId = item.itemId)
         let order = {
           userId: getters.uid,
           itemInfo: [item],
           status: 0,
         }
-        console.log(order)
         if (getters.uid) {
           if (getters.orderId) {
             let newCartItems = state.cartItems
@@ -129,6 +139,45 @@ const createStore = () => {
                 console.log('あたらしくordersを作成しました')
               })
           }
+          //ログアウトの処理分岐
+        } else {
+          if (state.cartItems) {
+            console.log(state.cartItems)
+            commit('addItemToCartForNoUser', itemInfo)
+          } else {
+            commit('addItemToCart', { order: order })
+          }
+        }
+      },
+      //カートから商品を削除する
+      deleteItemFromCart({ state, getters, commit }, { id }) {
+        console.log(`削除しようとしている商品id${id}`)
+        if (getters.uid) {
+          let cartItems = state.cartItems
+          let a = JSON.stringify(cartItems.itemInfo)
+          a = JSON.parse(a)
+          const item = a.find((item) => item.id === id)
+          const index = a.indexOf(item)
+          console.log(a)
+          a.splice(index, 1)
+          firebase
+            .firestore()
+            .collection(`users/${getters.uid}/orders`)
+            .doc(getters.orderId)
+            .update({
+              itemInfo: [...a],
+            })
+            .then(() => {
+              commit('deleteCartItem', index)
+            })
+        } else {
+          let cartItems = state.cartItems
+          let a = JSON.stringify(cartItems.itemInfo)
+          a = JSON.parse(a)
+          const item = a.find((item) => item.id === id)
+          const index = a.indexOf(item)
+          commit('deleteCartItem', index)
+          commit('updateOrderList')
         }
       },
       //注文処理、引数orderInfo(obj)で入力データを取得してます
@@ -175,7 +224,6 @@ const createStore = () => {
           .get()
           .then((snapShot) => {
             snapShot.forEach((doc) => {
-              //引数のidを20桁のものに、itemを一番簡易なオブジェクトに置き換えている
               commit('fetchItemList', { id: doc.id, item: doc.data() })
             })
           })
@@ -190,14 +238,11 @@ const createStore = () => {
             .then((snapShot) => {
               snapShot.forEach((doc) => {
                 if (doc.data().status === 0) {
-                  console.log(doc.id)
                   commit('addItemToCart', {
                     orderId: doc.id,
                     order: doc.data(),
                   })
                 } else {
-                  //status:0も1もあるときに下記処理を加えるとNG
-                  //state.cartItems = null
                   commit('addItemToOrderedItems', {
                     orderId: doc.id,
                     order: doc.data(),
@@ -215,9 +260,6 @@ const createStore = () => {
       },
       updateOrderedList({ commit }) {
         commit('updateOrderedList')
-      },
-      deleteItemFromCart({ commit }) {
-        commit('deleteItemFromCart')
       },
     },
   })

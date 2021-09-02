@@ -15,6 +15,8 @@
                   itemPrice: item.itemPrice,
                   itemText: item.itemText,
                   img1: item.img1,
+                  img2: item.img2,
+                  img3: item.img3,
                 },
               }"
               ><v-card>
@@ -41,11 +43,9 @@ import firebase from '~/plugins/firebase'
 import { mapState, mapActions } from 'vuex'
 
 export default {
-  mounted() {
-    this.items = this.$store.state.itemList
-    this.fetchItemList()
-  },
   created() {
+    this.fetchItemList()
+    this.items = this.$store.state.itemList
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
         this.setLoginUser(user)
@@ -78,10 +78,12 @@ export default {
       'fetchItemList',
       'updateItemList',
       'fetchOrderList',
+      'updateOrderedList',
     ]),
   },
   destroyed() {
     this.updateItemList()
+    /* this.updateOrderedList() */
   },
 }
 </script>

@@ -4,14 +4,6 @@
       <div v-if="showFlg">
         <h2 v-if="show">ショッピングカート</h2>
         <h2 v-else>注文内容確認</h2>
-        <!--       <v-col class="d-flex" cols="1" sm="1">
-        <v-select
-          :items="itemNum"
-          item-text="selectNum"
-          dense
-          outlined
-        ></v-select>
-      </v-col> -->
         <v-layout justify-center>
           <v-data-table
             hide-default-footer
@@ -36,7 +28,7 @@
             <template v-slot:[`item.delete`]="{ item }">
               <v-btn
                 v-if="show"
-                @click="deleteConfirm(item.index)"
+                @click="deleteConfirm(item.id)"
                 color="error"
                 rounded
                 ><strong>削除</strong></v-btn
@@ -70,36 +62,35 @@ export default {
     OrderForm,
   },
   created() {
-    //どこになんの処理を書くか処理の流れを追うのめちゃくちゃ大事
     if (this.$store.state.cartItems == null) {
       this.showFlg = false
     } else {
       let cartItemsList = this.$store.state.cartItems
-      let cartItems = cartItemsList.itemInfo
-      this.cartItems = cartItems
-      console.log(this.cartItems.itemNum)
+      this.cartItems = cartItemsList.itemInfo
       this.showFlg = true
     }
   },
   data() {
     return {
-      show: true,
       headers: [
         { text: '', value: 'img1' },
         { text: '商品名', value: 'itemName' },
         { text: '価格(税抜)', value: 'itemPrice' },
-        { text: '数量', value: 'itemNum ' },
-        { text: '小計', value: 'sum' },
+        { text: '数量', value: 'itemNum' },
+        { text: '小計(税抜)', value: 'sum' },
         { value: 'delete', sortable: false },
       ],
       cartItems: [],
       tax: 0.1,
+      show: true,
       showFlg: true,
     }
   },
   methods: {
-    deleteConfirm() {
+    ...mapActions(['deleteItemFromCart']),
+    deleteConfirm(id) {
       confirm('削除してもよろしいですか？')
+      this.deleteItemFromCart({ id: id })
     },
     loginCheck() {
       if (this.$store.getters.uid) {

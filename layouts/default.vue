@@ -22,14 +22,14 @@
       <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
       <v-toolbar-title class="header-title" v-text="title" />
       <v-spacer />
-      <v-btn @click="checkOrderId()">getter.orderIdできてますか・・・</v-btn>
+      <!--       <v-btn @click="checkOrderId()">getter.orderIdできてますか・・・</v-btn> -->
       <v-btn to="Cart" icon><v-icon>mdi-cart</v-icon></v-btn>
       <v-btn to="OrderHistory" icon><v-icon>mdi-book-open</v-icon></v-btn>
       <v-btn @click="checkOut" v-if="$store.state.login_user" icon
         ><v-icon>mdi-logout</v-icon></v-btn
       >
       <v-btn to="Login" icon v-else><v-icon>mdi-login</v-icon></v-btn>
-      <v-btn to="Admin" icon><v-icon>mdi-key-star</v-icon></v-btn>
+      <!-- <v-btn to="Admin" icon><v-icon>mdi-key-star</v-icon></v-btn> -->
     </v-app-bar>
     <v-main>
       <v-container>

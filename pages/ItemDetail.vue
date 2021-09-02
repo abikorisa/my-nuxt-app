@@ -1,7 +1,12 @@
 <template>
   <v-container class="flex__main">
     <div class="left_clum">
-      <v-img width="500" :src="item.img1"></v-img>
+      <v-img :src="item.img1"></v-img>
+      <div class="img__list">
+        <v-img :src="item.img1"></v-img>
+        <v-img :src="item.img2"></v-img>
+        <v-img :src="item.img3"></v-img>
+      </div>
     </div>
     <div class="right_clum">
       <v-card>
@@ -11,7 +16,7 @@
         <div align="center">
           <v-text-field
             width="5"
-            v-model="item.itemNum"
+            v-model="number"
             type="number"
             style="width: 100px"
             max="10"
@@ -34,7 +39,7 @@
         </v-card-text>
         <v-card-text>
           ご注文金額合計：{{
-            (item.itemPrice * item.itemNum).toLocaleString('ja-JP')
+            (item.itemPrice * number).toLocaleString('ja-JP')
           }}円(税抜)
         </v-card-text>
       </v-card>
@@ -47,24 +52,27 @@ import { mapActions } from 'vuex'
 
 export default {
   created() {
-    this.item.id = this.$route.params.item_id
+    this.item.itemId = this.$route.params.item_id
     this.item.itemName = this.$route.params.itemName
     this.item.itemPrice = this.$route.params.itemPrice
     this.item.itemText = this.$route.params.itemText
     this.item.img1 = this.$route.params.img1
+    this.item.img2 = this.$route.params.img2
+    this.item.img3 = this.$route.params.img3
   },
   data() {
     return {
-      item: { itemNum: 1 },
+      item: {},
       id: '',
+      number: 1,
     }
   },
   methods: {
     ...mapActions(['addItemToCart']),
     addCart() {
-      //paramsで受け取ったitem(obj)の情報を引数に取る
+      this.item.itemNum = this.number
+      this.item.itemId = parseInt(this.item.itemNum)
       this.addItemToCart(this.item)
-      console.log(this.item)
     },
   },
 }
@@ -79,9 +87,9 @@ export default {
 
 .left_clum {
   width: 50%;
-  padding-left: 40px;
   .img__list {
     display: flex;
+    width: 35%;
     padding: 10px 0px;
   }
 }

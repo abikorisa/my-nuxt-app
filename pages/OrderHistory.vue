@@ -15,14 +15,13 @@
           <template v-slot:[`item.itemPrice`]="{ item }">
             <td>{{ item.itemPrice.toLocaleString('ja-JP') }}円</td>
           </template>
-          <template v-slot:[`item.cancel`]="{ item }">
-            <v-btn
-              v-if="show"
-              @click="deleteConfirm(item.index)"
-              color="error"
-              rounded
-              ><strong>キャンセル</strong></v-btn
-            >
+          <template v-slot:[`item.itemNum`]="{ item }">
+            <td>{{ item.itemNum }}個</td>
+          </template>
+          <template v-slot:[`item.sum`]="{ item }">
+            <td>
+              {{ (item.itemPrice * item.itemNum).toLocaleString('ja-JP') }}円
+            </td>
           </template>
         </v-data-table>
       </v-layout>
@@ -34,7 +33,8 @@
 import { mapActions } from 'vuex'
 
 export default {
-  created() {
+  mounted() {
+    this.fetchOrderList()
     let orderedItems = this.$store.state.orderedItems
     orderedItems.forEach((order) => {
       order.itemInfo.forEach((item) => {
@@ -46,29 +46,18 @@ export default {
     return {
       show: true,
       headers: [
-        {
-          text: '',
-          value: 'img1',
-        },
-        {
-          text: '商品名',
-          value: 'itemName',
-        },
-        {
-          text: '価格',
-          value: 'itemPrice',
-        },
-        {
-          text: '個数',
-          value: 'num',
-        },
-        { value: 'cancel', sortable: false },
+        { text: '', value: 'img1' },
+        { text: '商品名', value: 'itemName' },
+        { text: '価格(税抜)', value: 'itemPrice' },
+        { text: '数量', value: 'itemNum' },
+        { text: '小計(税抜)', value: 'sum' },
       ],
       orderdItem: [],
+      cancelFlg: true,
     }
   },
   methods: {
-    ...mapActions(['updateOrderedList']),
+    ...mapActions(['updateOrderedList', 'fetchOrderList']),
     loginCheck() {
       if (this.$store.getters.uid) {
         this.show = !this.show

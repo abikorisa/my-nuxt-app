@@ -66,7 +66,7 @@ export default {
     submit() {
       this.doAddItem(this.item)
     },
-    ...mapActions(['doAddItem']),
+    ...mapActions(['doAddItem', 'doAddItem2']),
   },
 }
 </script>
