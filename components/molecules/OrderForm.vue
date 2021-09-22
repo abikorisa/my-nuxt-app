@@ -1,5 +1,67 @@
 <template>
   <v-container>
+    <div class="wrapper">
+      <div class="form">
+        <div class="form__contact">
+          <ValidationObserver ref="observer" v-slot="{ invalid }" immediate>
+            <form>
+              <ValidationProvider
+                v-slot="{ errors }"
+                name="お名前"
+                rules="required"
+              >
+                <span>お名前</span><span class="must">必須</span>
+                <v-text-field
+                  id="name"
+                  placeholder="山田太郎"
+                  :error-messages="errors"
+                  outlined
+                  dense
+                  required
+                ></v-text-field>
+              </ValidationProvider>
+
+              <ValidationProvider
+                v-slot="{ errors }"
+                name="メールアドレス"
+                rules="required|email"
+              >
+                <span>メールアドレス</span><span class="must">必須</span>
+                <v-text-field
+                  id="email"
+                  :error-messages="errors"
+                  placeholder="sample@sample.com"
+                  required
+                  outlined
+                  dense
+                ></v-text-field>
+              </ValidationProvider>
+
+              <ValidationProvider
+                v-slot="{ errors }"
+                name="お問い合わせ内容"
+                rules="required"
+              >
+                <span>お問い合わせ内容</span><span class="must">必須</span>
+                <v-textarea
+                  id="text"
+                  :error-messages="errors"
+                  placeholder="お問い合わせ内容をご入力ください"
+                  required
+                  outlined
+                  dense
+                ></v-textarea>
+              </ValidationProvider>
+              <div class="text-center">
+                <v-btn :disabled="invalid" @click="submit()"
+                  >この内容で送信する</v-btn
+                >
+              </div>
+            </form>
+          </ValidationObserver>
+        </div>
+      </div>
+    </div>
     <v-layout justify-center>
       <v-card class="box-shadow-none" width="60%">
         <div class="top-card">
@@ -20,7 +82,9 @@
                   prepend-icon="mdi-account-circle"
                   v-model="orderInfo.name"
                   :error-messages="errors"
-                  label="お名前"
+                  placeholder="山田太郎"
+                  outlined
+                  dense
                   required
                 ></v-text-field>
               </ValidationProvider>
@@ -127,3 +191,28 @@ export default {
   },
 }
 </script>
+
+<style scoped lang="scss">
+.form {
+  width: 60%;
+  padding: 20px;
+  border: 3px solid #0c3484;
+  margin: 60px auto;
+  border-radius: 10px;
+  &__contact {
+    width: 80%;
+    margin: 0 auto;
+  }
+  .must {
+    font-size: 10px;
+    font-weight: 900;
+    padding: 3px 5px;
+    margin-left: 5px;
+    border-radius: 5px;
+    color: #fff;
+    background-color: red;
+    display: inline-block;
+    vertical-align: top;
+  }
+}
+</style>

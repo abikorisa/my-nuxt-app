@@ -1,11 +1,11 @@
 <template>
   <v-carousel cycle height="400" hide-delimiter-background show-arrows-on-hover>
-    <v-carousel-item v-for="(slide, i) in slides" :key="i">
-      <v-sheet :color="colors[i]" height="100%">
-        <v-row class="fill-height" align="center" justify="center">
-          <div class="text-h2">{{ slide }}</div>
-        </v-row>
-      </v-sheet>
+    <v-carousel-item
+      height="100%"
+      v-for="(slide, i) in slides"
+      :key="i"
+      :src="slide.src"
+    >
     </v-carousel-item>
   </v-carousel>
 </template>
@@ -21,8 +21,20 @@ export default {
         'red lighten-1',
         'deep-purple accent-4',
       ],
-      slides: ['UP TO 70%OFF', 'Second', 'Third', 'Fourth', 'Fifth'],
+      slides: [
+        { src: require('../../assets/img/ec1.png') },
+        { src: require('../../assets/img/ec2.png') },
+        { src: require('../../assets/img/ec3.png') },
+      ],
     }
   },
 }
 </script>
+
+<style lang="scss">
+.wrapper {
+  margin: 0 auto;
+  max-width: 1170px;
+  width: 80%;
+}
+</style>

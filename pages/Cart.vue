@@ -1,54 +1,61 @@
 <template>
-  <v-app>
-    <v-container>
-      <div v-if="showFlg">
-        <h2 v-if="show">ショッピングカート</h2>
-        <h2 v-else>注文内容確認</h2>
-        <v-layout justify-center>
-          <v-data-table
-            hide-default-footer
-            class="elevation-1"
-            :headers="headers"
-            :items="cartItems"
-          >
-            <template v-slot:[`item.img1`]="{ item }">
+  <div class="wrapper">
+    <div class="cart-element">
+      <div class="head">
+        <p class="head__label--img">商品</p>
+        <p class="head__label">価格(税抜)</p>
+        <p class="head__label">数量</p>
+        <p class="head__label">小計</p>
+        <p class="head__label">-</p>
+      </div>
+      <ul class="cart-list" v-for="item in cartItems" :key="item.index">
+        <li>
+          <div class="item">
+            <div class="item__label--img">
               <img :src="item.img1" width="100px" />
-            </template>
-            <template v-slot:[`item.itemPrice`]="{ item }">
-              <td>{{ item.itemPrice.toLocaleString('ja-JP') }}円</td>
-            </template>
-            <template v-slot:[`item.itemNum`]="{ item }">
-              <td>{{ item.itemNum }}個</td>
-            </template>
-            <template v-slot:[`item.sum`]="{ item }">
-              <td>
+              <p class="item__itemName">{{ item.itemName }}</p>
+            </div>
+            <div class="item__label">
+              <p class="item__num">
+                {{ item.itemPrice.toLocaleString('ja-JP') }}円
+              </p>
+            </div>
+            <div class="item__label">
+              <p class="item__num">{{ item.itemNum }}個</p>
+            </div>
+            <div class="item__label bold-font">
+              <p class="item__num">
                 {{ (item.itemPrice * item.itemNum).toLocaleString('ja-JP') }}円
-              </td>
-            </template>
-            <template v-slot:[`item.delete`]="{ item }">
-              <v-btn
-                v-if="show"
-                @click="deleteConfirm(item.id)"
-                color="error"
-                rounded
-                ><strong>削除</strong></v-btn
-              >
-            </template>
-          </v-data-table>
-        </v-layout>
-        <v-layout justify-center>
-          <v-btn to="/">お買い物を続ける</v-btn>
-          <v-btn @click="loginCheck()">注文にすすむ</v-btn>
-        </v-layout>
-        <v-layout justify-center>
-          <OrderForm v-show="!show" />
-        </v-layout>
+              </p>
+            </div>
+            <div class="item__label">
+              <button @click="deleteConfirm(item.id)">
+                <i class="fas fa-trash-alt"></i>削除
+              </button>
+            </div>
+          </div>
+        </li>
+      </ul>
+      <div class="total-price">
+        <p>小計</p>
+        <p>消費税</p>
+        <p>注文合計:¥ 9,980</p>
       </div>
-      <div v-else>
-        <h3>商品はありません</h3>
+      <div class="cart-element">
+        <button class="cart-element__btn" @click="backToTop()">
+          <i class="fas fa-shopping-basket"></i>ショッピングを続ける
+        </button>
+        <button
+          v-if="!this.show"
+          class="cart-element__btn"
+          @click="loginCheck()"
+        >
+          <i class="fas fa-cash-register"></i>レジへ進む
+        </button>
       </div>
-    </v-container>
-  </v-app>
+    </div>
+    <OrderForm v-if="this.show" />
+  </div>
 </template>
 
 <script>
@@ -82,7 +89,7 @@ export default {
       ],
       cartItems: [],
       tax: 0.1,
-      show: true,
+      show: false,
       showFlg: true,
     }
   },
@@ -99,9 +106,107 @@ export default {
         this.$router.push('/Login')
       }
     },
+    backToTop() {
+      this.$router.push('/')
+    },
   },
   /* destroyed() {
     this.updateOrderList()
   } */
 }
 </script>
+
+<style scoped lang="scss">
+@import 'https://use.fontawesome.com/releases/v5.13.0/css/all.css';
+
+.cart-element {
+  width: 750px;
+  margin: 40px auto;
+  text-align: center;
+  &__btn {
+    display: inline-block;
+    background-color: #666;
+    color: #fff;
+    border-radius: 5px;
+    padding: 13px 30px;
+    margin-right: 20px;
+    font-weight: 700;
+    font-size: 15px;
+    transition: 0.3s;
+    > i {
+      padding-right: 10px;
+      color: #fff;
+    }
+    &:hover {
+      background-color: #ddd;
+    }
+    &:last-child {
+      margin-right: 0;
+    }
+  }
+}
+
+//ulに付与する
+.item {
+  border-bottom: 1px solid #ddd;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  margin: 0 auto;
+  &__label {
+    padding: 5px 20px;
+    margin: 0 1px;
+    width: 200px;
+    text-align: center;
+    font-size: 14px;
+    &--img {
+      padding: 8px 20px;
+      margin: 0 1px;
+      width: 300px;
+      text-align: center;
+      font-size: 13px;
+    }
+  }
+  &__itemName {
+    margin: 0;
+  }
+  &__num {
+    margin: 0;
+  }
+}
+.head {
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  margin: 0 auto;
+  &__label {
+    background-color: #e5e5e5;
+    padding: 5px 20px;
+    margin: 0 1px;
+    width: 200px;
+    text-align: center;
+    font-size: 12px;
+    &--img {
+      background-color: #e5e5e5;
+      padding: 5px 20px;
+      margin: 0 1px;
+      width: 300px;
+      text-align: center;
+      font-size: 12px;
+    }
+  }
+}
+
+.cart-list {
+  list-style: none;
+  padding: 0;
+}
+
+.total-price {
+  text-align: right;
+}
+
+.bold-font {
+  font-weight: 700;
+}
+</style>

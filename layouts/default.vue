@@ -22,7 +22,6 @@
       <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
       <v-toolbar-title class="header-title" v-text="title" />
       <v-spacer />
-      <!--       <v-btn @click="checkOrderId()">getter.orderIdできてますか・・・</v-btn> -->
       <v-btn to="Cart" icon><v-icon>mdi-cart</v-icon></v-btn>
       <v-btn to="OrderHistory" icon><v-icon>mdi-book-open</v-icon></v-btn>
       <v-btn @click="checkOut" v-if="$store.state.login_user" icon

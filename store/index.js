@@ -26,6 +26,7 @@ const createStore = () => {
       },
       //取得した商品情報をローカルでも保持
       fetchItemList(state, { id, item }) {
+        //下記idを代入する必要性
         item.itemId = id
         state.itemList.push(item)
       },
@@ -98,16 +99,16 @@ const createStore = () => {
       },
       //カート追加処理
       addItemToCart({ state, getters, commit }, item) {
+        //ランダムidをorder毎に付与
         function getUniqueStr(myStrong) {
-          var strong = 1000
+          let strong = 1000
           if (myStrong) strong = myStrong
           return (
             new Date().getTime().toString(16) +
             Math.floor(strong * Math.random()).toString(16)
           )
         }
-        let itemInfo = item
-        ;(itemInfo.id = getUniqueStr()), (itemInfo.itemId = item.itemId)
+        item.id = getUniqueStr()
         let order = {
           userId: getters.uid,
           itemInfo: [item],

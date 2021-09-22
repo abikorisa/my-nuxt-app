@@ -1,38 +1,36 @@
 <template>
   <v-app>
-    <Carousel />
-    <SearchForm />
-    <v-container v-if="$store.state.flag">
-      <v-hover>
-        <v-row>
-          <v-col cols="3" v-for="(item, i) in items" :key="i" align="center">
-            <router-link
-              :to="{
-                name: 'ItemDetail',
-                params: {
-                  item_id: item.id,
-                  itemName: item.itemName,
-                  itemPrice: item.itemPrice,
-                  itemText: item.itemText,
-                  img1: item.img1,
-                  img2: item.img2,
-                  img3: item.img3,
-                },
-              }"
-              ><v-card>
-                <v-img :src="item.img1"></v-img>
-                <v-card-text>
-                  {{ item.itemName }}
-                </v-card-text>
-                <v-card-text> JPY {{ item.itemPrice }} </v-card-text>
-                <v-card-actions>
-                  <v-spacer />
-                </v-card-actions> </v-card
-            ></router-link>
-          </v-col>
-        </v-row>
-      </v-hover>
-    </v-container>
+    <div class="wrapper">
+      <Carousel />
+      <SearchForm />
+      <v-container v-if="$store.state.flag">
+        <v-hover>
+          <v-row>
+            <v-col cols="3" v-for="(item, i) in items" :key="i" align="center">
+              <router-link
+                :to="{
+                  name: 'ItemDetail',
+                  params: {
+                    item: item,
+                  },
+                }"
+                ><v-card>
+                  <v-img :src="item.img1"></v-img>
+                  <v-card-text>
+                    {{ item.itemName }}
+                  </v-card-text>
+                  <v-card-text>
+                    ¥{{ item.itemPrice.toLocaleString('ja-JP') }}
+                  </v-card-text>
+                  <v-card-actions>
+                    <v-spacer />
+                  </v-card-actions> </v-card
+              ></router-link>
+            </v-col>
+          </v-row>
+        </v-hover>
+      </v-container>
+    </div>
   </v-app>
 </template>
 
@@ -105,6 +103,10 @@ export default {
 <style lang="scss">
 * {
   box-sizing: border-box;
+}
+
+body {
+  font-family: 'Roboto', sans-serif;
 }
 
 a:link,

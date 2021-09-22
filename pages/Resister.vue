@@ -1,39 +1,16 @@
 <template>
-  <v-app>
-    <v-container>
-      <v-layout justify-center>
-        <v-card class="box-shadow-none" width="60%">
-          <div class="top-card">
-            <v-card-title class="justify-center top-title">
-              会員登録画面</v-card-title
-            >
-          </div>
-          <v-card-text>
-            <form>
-              <v-text-field
-                id="email"
-                v-model="email"
-                prepend-icon="mdi-email"
-                label="メールアドレス"
-              ></v-text-field>
-
-              <v-text-field
-                id="password"
-                v-model="password"
-                prepend-icon="mdi-lock"
-                label="パスワード"
-                type="password"
-              ></v-text-field>
-
-              <div class="text-center">
-                <v-btn @click="signIn()">ログイン</v-btn>
-              </div>
-            </form>
-          </v-card-text>
-        </v-card>
-      </v-layout>
-    </v-container>
-  </v-app>
+  <div class="wrapper">
+    <div class="login__form">
+      <div class="signIn">
+        <h2 class="signIn__title">新規登録</h2>
+        <p class="signIn__subTitle">メールアドレス</p>
+        <input class="signIn__input" type="text" v-model="email" />
+        <p class="signIn__subTitle">パスワード</p>
+        <input class="signIn__input" type="password" v-model="password" /><br />
+        <button class="main-btn" @click="signIn()">登録する</button>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
