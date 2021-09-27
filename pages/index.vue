@@ -47,7 +47,6 @@ export default {
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
         this.setLoginUser(user)
-        this.fetchOrderList()
         this.$router.push('/')
       } else {
         this.deleteLoginUser()
@@ -73,15 +72,13 @@ export default {
       'setLoginUser',
       'logout',
       'deleteLoginUser',
-      'fetchItemList',
       'updateItemList',
-      'fetchOrderList',
-      'updateOrderedList',
+      'fetchItemList',
     ]),
+    // ...mapActions('item', ['fetchItemList']),
   },
   destroyed() {
     this.updateItemList()
-    /* this.updateOrderedList() */
   },
 }
 </script>
@@ -113,5 +110,9 @@ a:link,
 a:visited {
   color: black;
   text-decoration: none;
+}
+
+.v-application p {
+  margin-bottom: 2px;
 }
 </style>

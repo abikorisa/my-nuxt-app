@@ -1,60 +1,77 @@
 <template>
-  <v-app>
-    <v-container>
-      <h2>注文履歴</h2>
-      <v-layout justify-center>
-        <v-data-table
-          hide-default-footer
-          class="elevation-1"
-          :headers="headers"
-          :items="orderdItem"
-        >
-          <template v-slot:[`item.img1`]="{ item }">
-            <img :src="item.img1" width="100px" />
-          </template>
-          <template v-slot:[`item.itemPrice`]="{ item }">
-            <td>{{ item.itemPrice.toLocaleString('ja-JP') }}円</td>
-          </template>
-          <template v-slot:[`item.itemNum`]="{ item }">
-            <td>{{ item.itemNum }}個</td>
-          </template>
-          <template v-slot:[`item.sum`]="{ item }">
-            <td>
-              {{ (item.itemPrice * item.itemNum).toLocaleString('ja-JP') }}円
-            </td>
-          </template>
-        </v-data-table>
-      </v-layout>
-    </v-container>
-  </v-app>
+  <div class="wrapper">
+    <div class="list-element">
+      <div class="title__tag"><h3>注文履歴</h3></div>
+      <div class="head">
+        <p class="head__label--img">商品</p>
+        <p class="head__label">価格(税抜)</p>
+        <p class="head__label">数量</p>
+        <p class="head__label">小計</p>
+      </div>
+      <div class="waku">
+        <ul class="cart-list" v-for="item in orderdList" :key="item.index">
+          <div class="orderDate">
+            <li>{{ item.orderDate }}注文</li>
+            <li>
+              <button>
+                {{ item.status === 1 ? 'キャンセルする' : 'キャンセル済み' }}
+              </button>
+            </li>
+          </div>
+          <li v-for="i in item.itemInfo" :key="i.index">
+            <div class="items">
+              <div class="items__label--img">
+                <img :src="i.img1" width="100px" />
+                <p class="items__itemName">{{ i.itemName }}</p>
+              </div>
+              <div class="items__label">
+                <p class="items__num">
+                  {{ i.itemPrice.toLocaleString('ja-JP') }}円
+                </p>
+              </div>
+              <div class="items__label">
+                <p class="items__num">{{ i.itemNum }}個</p>
+              </div>
+              <div class="items__label bold-font">
+                <p class="items__num">
+                  {{ (i.itemPrice * i.itemNum).toLocaleString('ja-JP') }}円
+                </p>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="list-element">
+      <button class="list-element__btn" @click="backToTop()">
+        <i class="fas fa-arrow-left"></i>ホーム画面に戻る
+      </button>
+    </div>
+  </div>
 </template>
 
 <script>
 import { mapActions } from 'vuex'
 
 export default {
-  mounted() {
+  created() {
     this.fetchOrderList()
-    let orderedItems = this.$store.state.orderedItems
-    orderedItems.forEach((order) => {
-      order.itemInfo.forEach((item) => {
-        this.orderdItem.push(item)
-      })
-    })
+    this.orderdList = this.$store.state.orderedItems
   },
   data() {
     return {
+      tax: 0.1,
       show: true,
-      headers: [
-        { text: '', value: 'img1' },
-        { text: '商品名', value: 'itemName' },
-        { text: '価格(税抜)', value: 'itemPrice' },
-        { text: '数量', value: 'itemNum' },
-        { text: '小計(税抜)', value: 'sum' },
-      ],
-      orderdItem: [],
-      cancelFlg: true,
+      orderdList: [],
+      showFlg: true,
     }
+  },
+  computed: {
+    cancelFlg() {
+      this.orderdList.forEach((item) => {
+        return item.status
+      })
+    },
   },
   methods: {
     ...mapActions(['updateOrderedList', 'fetchOrderList']),
@@ -68,9 +85,24 @@ export default {
     deleteConfirm() {
       confirm('削除してもよろしいですか？')
     },
+    backToTop() {
+      this.$router.push('/')
+    },
   },
   destroyed() {
     this.updateOrderedList()
   },
 }
 </script>
+
+<style scoped lang="scss">
+.orderDate {
+  background-color: #f5f5f5;
+  padding: 5px 0;
+  font-size: 13px;
+}
+
+.waku {
+  border: 1px solid #f5f5f5;
+}
+</style>

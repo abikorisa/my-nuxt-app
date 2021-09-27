@@ -3,6 +3,9 @@
     <div class="wrapper">
       <div class="form">
         <div class="form__contact">
+          <div class="form__title">
+            <div class="title__tag"><h3>お届け先情報</h3></div>
+          </div>
           <ValidationObserver ref="observer" v-slot="{ invalid }" immediate>
             <form>
               <ValidationProvider
@@ -13,6 +16,7 @@
                 <span>お名前</span><span class="must">必須</span>
                 <v-text-field
                   id="name"
+                  v-model="orderInfo.name"
                   placeholder="山田太郎"
                   :error-messages="errors"
                   outlined
@@ -29,6 +33,7 @@
                 <span>メールアドレス</span><span class="must">必須</span>
                 <v-text-field
                   id="email"
+                  v-model="orderInfo.email"
                   :error-messages="errors"
                   placeholder="sample@sample.com"
                   required
@@ -36,24 +41,56 @@
                   dense
                 ></v-text-field>
               </ValidationProvider>
-
               <ValidationProvider
                 v-slot="{ errors }"
-                name="お問い合わせ内容"
+                name="電話番号"
                 rules="required"
               >
-                <span>お問い合わせ内容</span><span class="must">必須</span>
-                <v-textarea
-                  id="text"
+                <span>電話番号</span><span class="must">必須</span>
+                <v-text-field
+                  id="tel"
+                  v-model="orderInfo.tel"
                   :error-messages="errors"
-                  placeholder="お問い合わせ内容をご入力ください"
+                  placeholder="080-1111-1111"
                   required
                   outlined
                   dense
-                ></v-textarea>
+                ></v-text-field>
+              </ValidationProvider>
+              <ValidationProvider
+                v-slot="{ errors }"
+                name="郵便番号"
+                rules="required"
+              >
+                <span>郵便番号</span><span class="must">必須</span>
+                <v-text-field
+                  id="zipNum"
+                  v-model="orderInfo.zipNum"
+                  :error-messages="errors"
+                  placeholder="111-1111"
+                  required
+                  outlined
+                  dense
+                ></v-text-field>
+              </ValidationProvider>
+              <ValidationProvider
+                v-slot="{ errors }"
+                name="住所"
+                rules="required"
+              >
+                <span>住所</span><span class="must">必須</span>
+                <v-text-field
+                  id="address"
+                  v-model="orderInfo.address"
+                  :error-messages="errors"
+                  placeholder="東京都世田谷区"
+                  required
+                  outlined
+                  dense
+                ></v-text-field>
               </ValidationProvider>
               <div class="text-center">
-                <v-btn :disabled="invalid" @click="submit()"
+                <v-btn :disabled="invalid" @click="checkInput()"
                   >この内容で送信する</v-btn
                 >
               </div>
@@ -62,88 +99,6 @@
         </div>
       </div>
     </div>
-    <v-layout justify-center>
-      <v-card class="box-shadow-none" width="60%">
-        <div class="top-card">
-          <v-card-title class="justify-center top-title">
-            お届け先情報</v-card-title
-          >
-        </div>
-        <v-card-text>
-          <ValidationObserver ref="observer" v-slot="{ invalid }" immediate>
-            <form>
-              <ValidationProvider
-                v-slot="{ errors }"
-                name="お名前"
-                rules="required"
-              >
-                <v-text-field
-                  id="name"
-                  prepend-icon="mdi-account-circle"
-                  v-model="orderInfo.name"
-                  :error-messages="errors"
-                  placeholder="山田太郎"
-                  outlined
-                  dense
-                  required
-                ></v-text-field>
-              </ValidationProvider>
-
-              <ValidationProvider
-                v-slot="{ errors }"
-                name="メールアドレス"
-                rules="required|email"
-              >
-                <v-text-field
-                  id="email"
-                  prepend-icon="mdi-email"
-                  v-model="orderInfo.email"
-                  :error-messages="errors"
-                  label="メールアドレス"
-                  required
-                ></v-text-field>
-              </ValidationProvider>
-
-              <ValidationProvider
-                v-slot="{ errors }"
-                name="電話番号"
-                rules="required"
-              >
-                <v-text-field
-                  id="tel"
-                  v-model="orderInfo.tel"
-                  prepend-icon="mdi-phone"
-                  label="電話番号"
-                  :error-messages="errors"
-                  required
-                ></v-text-field>
-              </ValidationProvider>
-
-              <v-text-field
-                id="zipNum"
-                v-model="orderInfo.zipNum"
-                prepend-icon="mdi-message-text"
-                label="郵便番号"
-                required
-              ></v-text-field>
-              <v-text-field
-                id="address"
-                v-model="orderInfo.address"
-                prepend-icon="mdi-home"
-                label="住所"
-                required
-              ></v-text-field>
-
-              <div class="text-center">
-                <v-btn :disabled="invalid" @click="checkInput()"
-                  >この内容で注文する</v-btn
-                >
-              </div>
-            </form>
-          </ValidationObserver>
-        </v-card-text>
-      </v-card>
-    </v-layout>
   </v-container>
 </template>
 
@@ -173,9 +128,16 @@ export default {
   },
   methods: {
     ...mapActions(['orderConfirm']),
+    showNowTime() {
+      let now = new Date()
+      let ye = now.getFullYear()
+      let mo = ('0' + (now.getMonth() + 1)).slice(-2)
+      let da = ('0' + now.getDate()).slice(-2)
+      this.orderInfo.orderDate = ye + '年' + mo + '月' + da + '日'
+    },
     checkInput() {
       if (this.$refs.observer.validate()) {
-        const date = new Date()
+        this.showNowTime()
         let obj = this.$store.state.cartItems
         obj.name = this.orderInfo.name
         obj.email = this.orderInfo.email
@@ -183,6 +145,7 @@ export default {
         obj.zipNum = this.orderInfo.zipNum
         obj.address = this.orderInfo.address
         obj.status = 1
+        obj.orderDate = this.orderInfo.orderDate
         this.orderConfirm({ order: obj }).then(() => {
           this.$router.push('/OrderComp')
         })
@@ -194,14 +157,19 @@ export default {
 
 <style scoped lang="scss">
 .form {
-  width: 60%;
+  width: 100%;
   padding: 20px;
-  border: 3px solid #0c3484;
+  border: 1px solid #e5e5e5;
   margin: 60px auto;
-  border-radius: 10px;
+  border-radius: 5px;
+  //  text-align: center;
   &__contact {
     width: 80%;
     margin: 0 auto;
+  }
+  &__title {
+    text-align: center;
+    margin-bottom: 30px;
   }
   .must {
     font-size: 10px;

@@ -2,11 +2,11 @@
   <div class="wrapper">
     <div class="item">
       <div class="item-left">
-        <div><img class="item-left__img" :src="item.img1" /></div>
+        <div><img class="item-left__img" :src="url" /></div>
         <div class="item-left__img">
-          <img :src="item.img1" />
-          <img :src="item.img2" />
-          <img :src="item.img3" />
+          <img @click="changeImg1" :src="item.img1" />
+          <img @click="changeImg2" :src="item.img2" />
+          <img @click="changeImg3" :src="item.img3" />
         </div>
       </div>
       <div class="item-right">
@@ -33,7 +33,11 @@
         </p>
       </div>
     </div>
-    <button>トップ画面に戻る</button>
+    <div class="list-element">
+      <button class="list-element__btn" @click="backToTop()">
+        <i class="fas fa-arrow-left"></i>ホーム画面に戻る
+      </button>
+    </div>
   </div>
 </template>
 
@@ -43,9 +47,11 @@ import { mapActions } from 'vuex'
 export default {
   created() {
     this.item = this.$route.params.item
+    this.url = this.item.img1
   },
   data() {
     return {
+      url: '',
       item: {},
       number: 1,
     }
@@ -55,6 +61,18 @@ export default {
     addCart() {
       this.item.itemNum = this.number
       this.addItemToCart(this.item)
+    },
+    backToTop() {
+      this.$router.push('/')
+    },
+    changeImg1() {
+      this.url = this.item.img1
+    },
+    changeImg2() {
+      this.url = this.item.img2
+    },
+    changeImg3() {
+      this.url = this.item.img3
     },
     increment() {
       this.number++
@@ -72,7 +90,6 @@ export default {
 
 <style scoped lang="scss">
 @import 'https://use.fontawesome.com/releases/v5.13.0/css/all.css';
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100&display=swap');
 .item {
   display: flex;
   margin: 60px auto;
@@ -101,6 +118,7 @@ export default {
     &__price {
       font-size: 18px;
       padding: 10px 0;
+      margin-bottom: 15px;
       border-bottom: 1px dashed #ddd;
       text-align: right;
     }
@@ -115,7 +133,6 @@ export default {
     }
     &__totalPrice {
       padding: 30px 0 10px 0;
-      //border-bottom: 1px solid #ddd;
       text-align: center;
       span {
         font-size: 25px;

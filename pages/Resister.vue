@@ -8,6 +8,9 @@
         <p class="signIn__subTitle">パスワード</p>
         <input class="signIn__input" type="password" v-model="password" /><br />
         <button class="main-btn" @click="signIn()">登録する</button>
+        <router-link class="signIn__link" :to="{ name: 'Login' }"
+          >ログイン画面にもどる</router-link
+        >
       </div>
     </div>
   </div>

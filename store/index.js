@@ -26,16 +26,16 @@ const createStore = () => {
       },
       //取得した商品情報をローカルでも保持
       fetchItemList(state, { id, item }) {
-        //下記idを代入する必要性
         item.itemId = id
         state.itemList.push(item)
       },
       //カート追加処理
       addItemToCart(state, { orderId, order }) {
         state.cartItems = order
+        //firebaseが付与したランダムID
         state.cartItems.orderId = orderId
-        console.log(state.cartItems.itemInfo)
       },
+      //下記処理に問題あり
       addItemToCartForNoUser(state, itemInfo) {
         let cartItems = state.cartItems
         cartItems.itemInfo.push(itemInfo)

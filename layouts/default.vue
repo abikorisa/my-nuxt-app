@@ -36,11 +36,6 @@
       </v-container>
     </v-main>
     <v-footer :absolute="!fixed" app>
-      <div class="footer_item">
-        <v-btn to="Cart" icon><v-icon>mdi-cart</v-icon></v-btn>
-        <v-btn to="OrderHistory" icon><v-icon>mdi-book-open</v-icon></v-btn>
-        <v-btn to="Login" icon><v-icon>mdi-account-check</v-icon></v-btn>
-      </div>
       <span>&copy; {{ new Date().getFullYear() }}</span>
     </v-footer>
   </v-app>
@@ -62,9 +57,14 @@ export default {
           to: '/',
         },
         {
-          icon: 'mdi-chart-bubble',
+          icon: 'mdi-cart',
           title: 'ショッピングカート',
           to: '/Cart',
+        },
+        {
+          icon: 'mdi-book-open',
+          title: '注文履歴画面',
+          to: '/OrderHistory',
         },
       ],
       title: '#4',
@@ -73,9 +73,6 @@ export default {
   methods: {
     ...mapActions(['logout']),
     ...mapGetters(['orderId']),
-    checkOrderId() {
-      return console.log(this.$store.getters.orderId)
-    },
     checkOut() {
       this.logout()
       alert('ログアウトしました')
@@ -90,10 +87,5 @@ export default {
 .header-title {
   font-family: 'Amatic SC', cursive;
   font-size: 40px;
-}
-
-.footer_item {
-  margin-left: auto;
-  margin-right: auto;
 }
 </style>
