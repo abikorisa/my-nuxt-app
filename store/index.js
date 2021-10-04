@@ -10,6 +10,7 @@ const createStore = () => {
         cartItems: null,
         itemList: [],
         orderedItems: [],
+        orderedLength: false,
       }
     },
     getters: {
@@ -17,32 +18,27 @@ const createStore = () => {
       orderId: (state) => (state.cartItems ? state.cartItems.orderId : null),
     },
     mutations: {
-      //ログイン関連処理
+      // -----認証処理------------------------------------------
       setLoginUser(state, user) {
         state.login_user = user
       },
       deleteLoginUser(state) {
         state.login_user = null
       },
-      //取得した商品情報をローカルでも保持
+      // -----商品取得処理------------------------------------
       fetchItemList(state, { id, item }) {
         item.itemId = id
         state.itemList.push(item)
       },
-      //カート追加処理
+      // -----カート追加処理------------------------------------
       addItemToCart(state, { orderId, order }) {
         state.cartItems = order
-        //firebaseが付与したランダムID
         state.cartItems.orderId = orderId
       },
-      //下記処理に問題あり
-      addItemToCartForNoUser(state, itemInfo) {
-        let cartItems = state.cartItems
-        cartItems.itemInfo.push(itemInfo)
-      },
       addItemToOrderedItems(state, { orderId, order }) {
-        order.orderId = orderId
         state.orderedItems.push(order)
+        console.log(state.orderedItems.length)
+        state.orderedLength = true
       },
       fetchOrderList(state, { id, order }) {
         order.orderId = id //20桁のid
@@ -62,8 +58,12 @@ const createStore = () => {
         let cartItems = state.cartItems
         cartItems.itemInfo.splice(index, 1)
       },
+      orderdLength(state) {
+        state.orderedLength = false
+      },
     },
     actions: {
+      // -----認証処理------------------------------------------
       logout() {
         firebase.auth().signOut()
       },
@@ -97,9 +97,8 @@ const createStore = () => {
       deleteLoginUser({ commit }) {
         commit('deleteLoginUser')
       },
-      //カート追加処理
+      // -----カート追加処理------------------------------------------
       addItemToCart({ state, getters, commit }, item) {
-        //ランダムidをorder毎に付与
         function getUniqueStr(myStrong) {
           let strong = 1000
           if (myStrong) strong = myStrong
@@ -128,25 +127,17 @@ const createStore = () => {
                   orderId: getters.orderId,
                   order: newCartItems,
                 })
-                console.log('既存のordersに追加しました')
               })
-          } else if (getters.orderId === null) {
+            console.log('既にあるorderに追加しました')
+          } else if (getters.orderId == null) {
             firebase
               .firestore()
               .collection(`users/${getters.uid}/orders`)
               .add(order)
               .then((doc) => {
                 commit('addItemToCart', { orderId: doc.id, order: order })
-                console.log('あたらしくordersを作成しました')
               })
-          }
-          //ログアウトの処理分岐
-        } else {
-          if (state.cartItems) {
-            console.log(state.cartItems)
-            commit('addItemToCartForNoUser', itemInfo)
-          } else {
-            commit('addItemToCart', { order: order })
+            console.log('新しくorderを作成しました')
           }
         }
       },
@@ -191,10 +182,7 @@ const createStore = () => {
             .update(order)
             .then(() => {
               state.cartItems = null
-              commit('addItemToOrderedItems', {
-                orderId: order.orderId,
-                order: order,
-              })
+              commit('updateOrderList')
             })
         }
       },
@@ -218,8 +206,8 @@ const createStore = () => {
         })
       },
       //firestore内の商品情報を取得
-      fetchItemList({ commit }) {
-        firebase
+      async fetchItemList({ commit }) {
+        await firebase
           .firestore()
           .collection(`admin/3y7ewoyuQyNLROHoc1TcOZK0IqM2/itemList`)
           .get()
@@ -230,7 +218,7 @@ const createStore = () => {
           })
       },
       //firestore内のカート情報を取得
-      fetchOrderList({ state, getters, commit }) {
+      fetchOrderList({ getters, commit }) {
         if (getters.uid) {
           firebase
             .firestore()
@@ -239,15 +227,20 @@ const createStore = () => {
             .then((snapShot) => {
               snapShot.forEach((doc) => {
                 if (doc.data().status === 0) {
+                  console.log('status:0があるよ')
                   commit('addItemToCart', {
                     orderId: doc.id,
                     order: doc.data(),
                   })
-                } else {
+                } else if (doc.data().status === 1) {
+                  console.log('status:1があるよ')
                   commit('addItemToOrderedItems', {
                     orderId: doc.id,
                     order: doc.data(),
                   })
+                } else {
+                  console.log('何もないよ')
+                  commit('orderdLength')
                 }
               })
             })
@@ -260,6 +253,11 @@ const createStore = () => {
         commit('updateOrderList')
       },
       updateOrderedList({ commit }) {
+        commit('updateOrderedList')
+      },
+      clearItems({ commit }) {
+        commit('updateItemList')
+        commit('updateOrderList')
         commit('updateOrderedList')
       },
     },

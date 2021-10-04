@@ -78,6 +78,7 @@ export default {
     ...mapActions(['fetchItemList']),
     checkWord() {
       this.searchItem = []
+      this.$store.state.flag = false
       this.items.forEach((search) => {
         let findName = search.itemName
         if (0 <= findName.search(this.search_word)) {

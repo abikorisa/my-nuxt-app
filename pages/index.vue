@@ -9,9 +9,10 @@
             <v-col cols="3" v-for="(item, i) in items" :key="i" align="center">
               <router-link
                 :to="{
-                  name: 'ItemDetail',
+                  name: 'ItemDetail-id',
                   params: {
                     item: item,
+                    id: item.id,
                   },
                 }"
                 ><v-card>
@@ -38,18 +39,26 @@
 import SearchForm from '@/components/molecules/SearchForm.vue'
 import Carousel from '@/components/molecules/Carousel.vue'
 import firebase from '~/plugins/firebase'
-import { mapState, mapActions } from 'vuex'
+import { mapState, mapActions, mapGetters } from 'vuex'
 
 export default {
-  created() {
-    this.fetchItemList()
+  components: {
+    SearchForm,
+    Carousel,
+  },
+  async fetch() {
+    await Promise.all([this.fetchItemList()])
     this.items = this.$store.state.itemList
+  },
+  created() {
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
         this.setLoginUser(user)
+        this.fetchOrderList()
         this.$router.push('/')
       } else {
         this.deleteLoginUser()
+        this.clearItems()
         this.$router.push('/')
       }
     })
@@ -63,39 +72,21 @@ export default {
   computed: {
     ...mapState(['login_user']),
   },
-  components: {
-    SearchForm,
-    Carousel,
-  },
   methods: {
     ...mapActions([
       'setLoginUser',
       'logout',
       'deleteLoginUser',
-      'updateItemList',
       'fetchItemList',
+      'fetchOrderList',
+      'clearItems',
     ]),
-    // ...mapActions('item', ['fetchItemList']),
   },
   destroyed() {
-    this.updateItemList()
+    this.clearItems()
   },
 }
 </script>
-
-<style scoped lang="scss">
-.v-card {
-  transition: all 0.6s;
-  overflow: hidden;
-  &:hover {
-    box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.6);
-  }
-  &.box-shadow-none {
-    margin-top: 30px;
-    box-shadow: none;
-  }
-}
-</style>
 
 <style lang="scss">
 * {
@@ -114,5 +105,17 @@ a:visited {
 
 .v-application p {
   margin-bottom: 2px;
+}
+
+.v-card {
+  transition: all 0.6s;
+  overflow: hidden;
+  &:hover {
+    box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.6);
+  }
+  &.box-shadow-none {
+    margin-top: 30px;
+    box-shadow: none;
+  }
 }
 </style>

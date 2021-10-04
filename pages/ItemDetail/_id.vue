@@ -46,8 +46,17 @@ import { mapActions } from 'vuex'
 
 export default {
   created() {
-    this.item = this.$route.params.item
-    this.url = this.item.img1
+    if (this.$route.params.item) {
+      this.item = this.$route.params.item
+      this.url = this.item.img1
+      sessionStorage.setItem('catch-params', JSON.stringify(this.item))
+    } else {
+      let item = JSON.parse(sessionStorage.getItem('catch-params'))
+      if (item != null) {
+        this.item = item
+        this.url = this.item.img1
+      }
+    }
   },
   data() {
     return {

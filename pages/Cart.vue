@@ -1,6 +1,6 @@
 <template>
   <div class="wrapper">
-    <div class="list-element">
+    <div v-if="checklength" class="list-element">
       <div class="title__tag" v-if="changeFlg"><h3>カート</h3></div>
       <div class="title__tag" v-else><h3>注文フォーム</h3></div>
       <div class="head">
@@ -62,12 +62,16 @@
         >
           <i class="fas fa-shopping-basket"></i>ショッピングを続ける
         </button>
-        <button
-          v-if="!this.show"
-          class="list-element__btn"
-          @click="loginCheck()"
-        >
+        <button v-if="!this.show" class="list-element__btn" @click="openForm()">
           <i class="fas fa-cash-register"></i>レジへ進む
+        </button>
+      </div>
+    </div>
+    <div v-else class="list-element">
+      商品はありません
+      <div class="list-element">
+        <button class="list-element__btn" @click="backToTop()">
+          <i class="fas fa-arrow-left"></i>ホーム画面に戻る
         </button>
       </div>
     </div>
@@ -87,55 +91,61 @@ export default {
   },
   created() {
     this.fetchOrderList()
-    if (this.$store.state.cartItems == null) {
-      this.cartFlg = false
+    console.log(this.$store.state.cartItems)
+    if (this.$store.state.cartItems.length !== 0) {
+      if (this.$store.state.cartItems) {
+        let cartItemsList = this.$store.state.cartItems
+        this.cartItems = cartItemsList.itemInfo
+        this.deleteFlg = true
+      }
     } else {
-      //this.$store.state.cartItemsはfirestoreと同じ形でデータを保持している
-      let cartItemsList = this.$store.state.cartItems
-      //そのため下記でitemInfoだけを取り出さないといけない
-      this.cartItems = cartItemsList.itemInfo
-      this.cartFlg = true
-      this.deleteFlg = true
+      this.cartItems = []
     }
+    console.log(this.cartItems.length)
   },
   data() {
     return {
       cartItems: [],
       tax: 0.1,
       show: false,
-      cartFlg: true,
       deleteFlg: true,
       changeFlg: true,
     }
   },
   computed: {
+    checklength() {
+      if (this.cartItems.length === 0) {
+        return false
+      } else {
+        return true
+      }
+    },
     priceSum() {
-      let sum = 0
-      this.cartItems.forEach((item) => {
-        sum += item.itemNum * item.itemPrice
-      })
-      return sum
+      if (this.cartItems.length !== 0) {
+        let sum = 0
+        this.cartItems.forEach((item) => {
+          sum += item.itemNum * item.itemPrice
+        })
+        return sum
+      }
     },
   },
   methods: {
     ...mapActions([
       'deleteItemFromCart',
-      'updateOrderedList',
+      'updateOrderList',
       'fetchOrderList',
+      'updateOrderedList',
     ]),
     deleteConfirm(id) {
       if (window.confirm('削除してもよろしいですか？')) {
         this.deleteItemFromCart({ id: id })
       }
     },
-    loginCheck() {
-      if (this.$store.getters.uid) {
-        this.show = !this.show
-        this.changeFlg = false
-        this.deleteFlg = false
-      } else {
-        this.$router.push('/Login')
-      }
+    openForm() {
+      this.show = !this.show
+      this.changeFlg = false
+      this.deleteFlg = false
     },
     backToTop() {
       this.$router.push('/')
@@ -143,6 +153,7 @@ export default {
   },
   destroyed() {
     this.updateOrderedList()
+    this.updateOrderList()
   },
 }
 </script>

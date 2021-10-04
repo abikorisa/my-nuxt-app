@@ -1,44 +1,39 @@
 <template>
-  <v-app>
-    <v-navigation-drawer v-model="drawer" app clipped fixed>
-      <v-list>
-        <v-list-item
-          v-for="(item, i) in items"
-          :key="i"
-          :to="item.to"
-          router
-          exact
+  <client-only>
+    <v-app>
+      <v-app-bar clipped-left fixed app>
+        <v-toolbar-title class="header-title" v-text="title" />
+        <v-spacer />
+        <v-btn v-if="$store.state.login_user" @click="toCart" icon
+          ><v-icon>mdi-cart</v-icon></v-btn
         >
-          <v-list-item-action>
-            <v-icon>{{ item.icon }}</v-icon>
-          </v-list-item-action>
-          <v-list-item-content>
-            <v-list-item-title v-text="item.title"
-          /></v-list-item-content>
-        </v-list-item>
-      </v-list>
-    </v-navigation-drawer>
-    <v-app-bar clipped-left fixed app>
-      <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
-      <v-toolbar-title class="header-title" v-text="title" />
-      <v-spacer />
-      <v-btn to="Cart" icon><v-icon>mdi-cart</v-icon></v-btn>
-      <v-btn to="OrderHistory" icon><v-icon>mdi-book-open</v-icon></v-btn>
-      <v-btn @click="checkOut" v-if="$store.state.login_user" icon
-        ><v-icon>mdi-logout</v-icon></v-btn
-      >
-      <v-btn to="Login" icon v-else><v-icon>mdi-login</v-icon></v-btn>
-      <!-- <v-btn to="Admin" icon><v-icon>mdi-key-star</v-icon></v-btn> -->
-    </v-app-bar>
-    <v-main>
-      <v-container>
-        <Nuxt />
-      </v-container>
-    </v-main>
-    <v-footer :absolute="!fixed" app>
-      <span>&copy; {{ new Date().getFullYear() }}</span>
-    </v-footer>
-  </v-app>
+        <v-btn v-if="$store.state.login_user" @click="toOrderHistory" icon
+          ><v-icon>mdi-book-open</v-icon></v-btn
+        >
+        <v-btn v-if="$store.state.login_user" @click="checkOut" icon
+          ><v-icon>mdi-logout</v-icon></v-btn
+        >
+        <!-- <v-btn to="Admin" icon><v-icon>mdi-key-star</v-icon></v-btn> -->
+
+        <button
+          v-if="!$store.state.login_user"
+          class="list-element__btn"
+          @click="checkIn()"
+        >
+          <i class="fas fa-user"></i>
+          Sign in
+        </button>
+      </v-app-bar>
+      <v-main>
+        <v-container>
+          <Nuxt />
+        </v-container>
+      </v-main>
+      <v-footer :absolute="!fixed" app>
+        <span>&copy; {{ new Date().getFullYear() }}</span>
+      </v-footer>
+    </v-app>
+  </client-only>
 </template>
 
 <script>
@@ -73,6 +68,15 @@ export default {
   methods: {
     ...mapActions(['logout']),
     ...mapGetters(['orderId']),
+    checkIn() {
+      this.$router.push('/Login')
+    },
+    toCart() {
+      this.$router.push('/Cart')
+    },
+    toOrderHistory() {
+      this.$router.push('/OrderHistory')
+    },
     checkOut() {
       this.logout()
       alert('ログアウトしました')
@@ -81,11 +85,39 @@ export default {
 }
 </script>
 
-<style scopled lang="scss">
+<style lang="scss">
 @import url('https://fonts.googleapis.com/css2?family=Amatic+SC:wght@700&display=swap');
+@import 'https://use.fontawesome.com/releases/v5.13.0/css/all.css';
 
 .header-title {
   font-family: 'Amatic SC', cursive;
   font-size: 40px;
+}
+
+.list-element {
+  width: 750px;
+  margin: 40px auto;
+  text-align: center;
+  &__btn {
+    display: inline-block;
+    background-color: #666;
+    color: #fff;
+    border-radius: 5px;
+    padding: 13px 30px;
+    margin-right: 20px;
+    font-weight: 700;
+    font-size: 15px;
+    transition: 0.3s;
+    > i {
+      padding-right: 10px;
+      color: #fff;
+    }
+    &:hover {
+      background-color: #ddd;
+    }
+    &:last-child {
+      margin-right: 0;
+    }
+  }
 }
 </style>
