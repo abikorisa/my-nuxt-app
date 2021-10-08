@@ -2,7 +2,7 @@
   <client-only>
     <v-app>
       <v-app-bar clipped-left fixed app>
-        <v-toolbar-title class="header-title" v-text="title" />
+        <v-toolbar-title @click="toHome" class="header-title" v-text="title" />
         <v-spacer />
         <v-btn v-if="$store.state.login_user" @click="toCart" icon
           ><v-icon>mdi-cart</v-icon></v-btn
@@ -37,7 +37,7 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex'
+import { mapActions } from 'vuex'
 
 export default {
   data() {
@@ -67,9 +67,11 @@ export default {
   },
   methods: {
     ...mapActions(['logout']),
-    ...mapGetters(['orderId']),
     checkIn() {
       this.$router.push('/Login')
+    },
+    toHome() {
+      this.$router.push('/')
     },
     toCart() {
       this.$router.push('/Cart')
@@ -92,6 +94,7 @@ export default {
 .header-title {
   font-family: 'Amatic SC', cursive;
   font-size: 40px;
+  cursor: pointer;
 }
 
 .list-element {

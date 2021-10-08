@@ -1,6 +1,6 @@
 <template>
   <div class="wrapper">
-    <div v-if="checklength" class="list-element">
+    <div v-if="fetchCartItems" class="list-element">
       <div class="title__tag" v-if="changeFlg"><h3>カート</h3></div>
       <div class="title__tag" v-else><h3>注文フォーム</h3></div>
       <div class="head">
@@ -90,22 +90,16 @@ export default {
     OrderForm,
   },
   created() {
-    this.fetchOrderList()
-    console.log(this.$store.state.cartItems)
-    if (this.$store.state.cartItems.length !== 0) {
-      if (this.$store.state.cartItems) {
-        let cartItemsList = this.$store.state.cartItems
-        this.cartItems = cartItemsList.itemInfo
-        this.deleteFlg = true
-      }
+    this.deleteFlg = true
+    if (this.$store.state.cartItems.itemInfo.length !== 0) {
+      this.cartItems = this.$store.state.cartItems.itemInfo
     } else {
-      this.cartItems = []
+      this.cartItems = null
     }
-    console.log(this.cartItems.length)
   },
   data() {
     return {
-      cartItems: [],
+      cartItems: null,
       tax: 0.1,
       show: false,
       deleteFlg: true,
@@ -113,21 +107,19 @@ export default {
     }
   },
   computed: {
-    checklength() {
-      if (this.cartItems.length === 0) {
+    fetchCartItems() {
+      if (this.$store.state.cartItems.itemInfo.length === 0) {
         return false
       } else {
         return true
       }
     },
     priceSum() {
-      if (this.cartItems.length !== 0) {
-        let sum = 0
-        this.cartItems.forEach((item) => {
-          sum += item.itemNum * item.itemPrice
-        })
-        return sum
-      }
+      let sum = 0
+      this.cartItems.forEach((item) => {
+        sum += item.itemNum * item.itemPrice
+      })
+      return sum
     },
   },
   methods: {
@@ -136,6 +128,7 @@ export default {
       'updateOrderList',
       'fetchOrderList',
       'updateOrderedList',
+      'fetchCartList',
     ]),
     deleteConfirm(id) {
       if (window.confirm('削除してもよろしいですか？')) {
@@ -151,10 +144,11 @@ export default {
       this.$router.push('/')
     },
   },
-  destroyed() {
+  /* destroyed() {
+    //カートと履歴を初期化
     this.updateOrderedList()
     this.updateOrderList()
-  },
+  }, */
 }
 </script>
 

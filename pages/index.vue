@@ -47,14 +47,18 @@ export default {
     Carousel,
   },
   async fetch() {
-    await Promise.all([this.fetchItemList()])
-    this.items = this.$store.state.itemList
+    if (this.$store.state.itemList.length === 0) {
+      await Promise.all([this.fetchItemList()])
+      this.items = this.$store.state.itemList
+    } else {
+      this.items = this.$store.state.itemList
+    }
   },
   created() {
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
         this.setLoginUser(user)
-        this.fetchOrderList()
+        this.fetchCartList()
         this.$router.push('/')
       } else {
         this.deleteLoginUser()
@@ -78,12 +82,11 @@ export default {
       'logout',
       'deleteLoginUser',
       'fetchItemList',
-      'fetchOrderList',
+      'fetchCartList',
       'clearItems',
+      'updateItemList',
+      'updateOrderedList',
     ]),
-  },
-  destroyed() {
-    this.clearItems()
   },
 }
 </script>

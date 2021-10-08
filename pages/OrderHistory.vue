@@ -51,19 +51,25 @@ import { mapActions } from 'vuex'
 
 export default {
   created() {
+    //ここでfetchすると非同期なので一旦空になってしまう
+    //なのでhomeでfetchしないと反映されない説ある
+    /* this.fetchOrderList()
+    console.log(this.$store.state.orderedItems) */
     this.fetchOrderList()
-    console.log(this.$store.state.orderedItems)
-    this.orderdList = this.$store.state.orderedItems
     this.showFlg = this.$store.state.orderedLength
-    console.log(this.$store.state.orderedLength)
   },
   data() {
     return {
       tax: 0.1,
       show: true,
-      orderdList: null,
+      orderdList: this.$store.state.orderedItems,
       showFlg: false,
     }
+  },
+  computed: {
+    fetchOrderdItems() {
+      return this.$store.state.orderedItems
+    },
   },
   methods: {
     ...mapActions(['updateOrderedList', 'fetchOrderList']),

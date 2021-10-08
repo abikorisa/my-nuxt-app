@@ -3,14 +3,44 @@
     <div class="login__form">
       <div class="signIn">
         <h2 class="signIn__title">ログイン</h2>
-        <p class="signIn__subTitle">メールアドレス</p>
-        <input class="signIn__input" type="text" v-model="email" />
-        <p class="signIn__subTitle">パスワード</p>
-        <input class="signIn__input" type="password" v-model="password" /><br />
-        <button class="main-btn" @click="signIn()">ログイン</button>
-        <router-link class="signIn__link" :to="{ name: 'Resister' }"
-          >新規会員登録はこちら</router-link
-        >
+        <p class="error-message" v-if="this.$store.state.loginError">
+          入力に不備があります
+        </p>
+        <ValidationObserver ref="observer" v-slot="{ invalid }">
+          <p class="signIn__subTitle">メールアドレス</p>
+          <validation-provider
+            v-slot="{ errors }"
+            name="メールアドレス"
+            rules="required|email"
+          >
+            <input class="signIn__input" type="text" v-model="email" />
+            <div class="signIn__error">
+              <p>
+                {{ errors[0] }}
+              </p>
+            </div>
+          </validation-provider>
+
+          <p class="signIn__subTitle">パスワード</p>
+          <validation-provider
+            v-slot="{ errors }"
+            name="パスワード"
+            rules="required"
+          >
+            <input class="signIn__input" type="password" v-model="password" />
+            <div class="signIn__error">
+              <p>
+                {{ errors[0] }}
+              </p>
+            </div>
+          </validation-provider>
+          <button class="main-btn" :disabled="invalid" @click="signIn()">
+            ログイン
+          </button>
+          <router-link class="signIn__link" :to="{ name: 'Resister' }"
+            >新規会員登録はこちら</router-link
+          >
+        </ValidationObserver>
       </div>
     </div>
   </div>
@@ -18,8 +48,22 @@
 
 <script>
 import { mapActions } from 'vuex'
+import { ValidationProvider, ValidationObserver, extend } from 'vee-validate'
+import { required, email } from 'vee-validate/dist/rules'
+extend('email', {
+  ...email,
+  message: '※入力形式が正しくありません',
+})
+extend('required', {
+  ...required,
+  message: '※{_field_}は必須項目です',
+})
 
 export default {
+  components: {
+    ValidationProvider,
+    ValidationObserver,
+  },
   data() {
     return {
       email: '',
@@ -76,10 +120,14 @@ export default {
   }
   &__input {
     padding: 10px 20px;
-    margin-bottom: 30px;
     width: 250px;
     border: 1px solid #ddd;
     background-color: #fff;
+  }
+  &__error {
+    margin-bottom: 30px;
+    font-size: 13px;
+    color: red;
   }
 }
 .main-btn {
